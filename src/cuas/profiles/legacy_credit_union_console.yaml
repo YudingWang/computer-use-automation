@@ -1,0 +1,52 @@
+app_family: legacy_credit_union_console
+surface: web
+known_outcomes:
+  - code: MEMBER_NOT_FOUND
+    message: No member record matched the supplied id.
+    when:
+      kind: visible_text
+      text: Member not found
+  - code: MEMBER_RESTRICTED
+    message: Member is restricted; origination is not allowed.
+    when:
+      kind: visible_text
+      text: Permission denied
+  - code: VALIDATION_ERROR
+    message: Form failed validation.
+    when:
+      kind: visible_text
+      text: Nickname is required
+  - code: VALIDATION_ERROR
+    message: Form failed validation.
+    when:
+      kind: visible_text
+      text: Initial deposit must
+recoverables:
+  - code: SYSTEM_NOTICE
+    on_match: dismiss
+    max_attempts: 1
+    when:
+      kind: visible_text
+      text: System Notice
+    resolve:
+      type: click
+      target:
+        primary:
+          strategy: role_name
+          role: button
+          name: Continue
+  - code: SESSION_EXPIRED
+    on_match: escalate
+    when:
+      kind: visible_text
+      text: Session expired
+extractors:
+  - output: confirmation_id
+    strategy: visible_regex
+    pattern: "Confirmation ID\\s*:?\\s*(CNF-[A-Z0-9-]+)"
+  - output: new_account_id
+    strategy: visible_regex
+    pattern: "New account\\s*:?\\s*([A-Z]{2}-\\d+)"
+  - output: savings_balance
+    strategy: visible_regex
+    pattern: "Savings balance\\s+([0-9.]+)"

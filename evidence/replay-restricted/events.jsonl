@@ -1,0 +1,7 @@
+{"ts": "2026-09-14T22:14:35.761050Z", "event": "replay_start", "run_id": "run_0b4eb41aea78", "capability_id": "open_subaccount", "params": {"member_id": "***80", "account_type": "Savings", "nickname": "X", "initial_deposit": "1"}}
+{"ts": "2026-09-14T22:14:36.348520Z", "event": "step_start", "step_id": "enter_member_id", "action": "type", "value": "***80"}
+{"ts": "2026-09-14T22:14:36.608354Z", "event": "step_ok", "step_id": "enter_member_id", "duration_ms": 292, "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-14T22:14:36.625582Z", "event": "step_start", "step_id": "search_member", "action": "click", "value": null}
+{"ts": "2026-09-14T22:14:36.887454Z", "event": "step_ok", "step_id": "search_member", "duration_ms": 278, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***80"}
+{"ts": "2026-09-14T22:14:36.899653Z", "event": "step_start", "step_id": "open_subaccount_form", "action": "click", "value": null}
+{"ts": "2026-09-14T22:14:37.174342Z", "event": "business_outcome", "code": "MEMBER_RESTRICTED", "step_id": "open_subaccount_form"}

@@ -1,0 +1,14 @@
+{
+  "status": "BUSINESS_OUTCOME",
+  "run_id": "run_3694bcc35521",
+  "capability_id": "open_subaccount",
+  "mode": "replay",
+  "outputs": {},
+  "outcome_code": "MEMBER_NOT_FOUND",
+  "message": "No member record matched the supplied id.",
+  "step_id": "search_member",
+  "expected": null,
+  "observed": null,
+  "intervention_id": null,
+  "evidence_dir": "evidence/replay-not-found"
+}

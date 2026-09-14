@@ -1,0 +1,15 @@
+{"ts": "2026-09-14T22:14:37.491658Z", "event": "replay_start", "run_id": "run_c4f7715a57fb", "capability_id": "open_subaccount", "params": {"member_id": "***45", "account_type": "Savings", "nickname": "Bad", "initial_deposit": "-10"}}
+{"ts": "2026-09-14T22:14:38.065244Z", "event": "step_start", "step_id": "enter_member_id", "action": "type", "value": "***45"}
+{"ts": "2026-09-14T22:14:38.340020Z", "event": "step_ok", "step_id": "enter_member_id", "duration_ms": 306, "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-14T22:14:38.357364Z", "event": "step_start", "step_id": "search_member", "action": "click", "value": null}
+{"ts": "2026-09-14T22:14:38.617990Z", "event": "step_ok", "step_id": "search_member", "duration_ms": 278, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45"}
+{"ts": "2026-09-14T22:14:38.631143Z", "event": "step_start", "step_id": "open_subaccount_form", "action": "click", "value": null}
+{"ts": "2026-09-14T22:14:38.881367Z", "event": "step_ok", "step_id": "open_subaccount_form", "duration_ms": 263, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:14:38.897286Z", "event": "step_start", "step_id": "select_account_type", "action": "select", "value": "Savings"}
+{"ts": "2026-09-14T22:14:39.129084Z", "event": "step_ok", "step_id": "select_account_type", "duration_ms": 248, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:14:39.138360Z", "event": "step_start", "step_id": "enter_nickname", "action": "type", "value": "Bad"}
+{"ts": "2026-09-14T22:14:39.370876Z", "event": "step_ok", "step_id": "enter_nickname", "duration_ms": 242, "strategy": "placeholder", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:14:39.379061Z", "event": "step_start", "step_id": "enter_deposit", "action": "type", "value": "-10"}
+{"ts": "2026-09-14T22:14:39.608420Z", "event": "step_ok", "step_id": "enter_deposit", "duration_ms": 237, "strategy": "placeholder", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:14:39.617470Z", "event": "step_start", "step_id": "review", "action": "click", "value": null}
+{"ts": "2026-09-14T22:14:39.892291Z", "event": "business_outcome", "code": "VALIDATION_ERROR", "step_id": "review"}

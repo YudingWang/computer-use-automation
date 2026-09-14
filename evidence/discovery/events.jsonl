@@ -1,0 +1,50 @@
+{"ts": "2026-09-14T22:14:28.313978Z", "event": "navigate", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-14T22:14:28.412755Z", "event": "observation", "url": "http://127.0.0.1:8765/", "title": "Member Search", "step": 1}
+{"ts": "2026-09-14T22:14:28.412978Z", "event": "decision", "raw": {"type": "type", "target": {"role": "textbox", "name": "Member ID", "frame": ["work"]}, "value": "***45", "reason": "enter member"}, "step": 1}
+{"ts": "2026-09-14T22:14:28.710933Z", "event": "action_result", "type": "type", "reason": "enter member", "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-14T22:14:28.731819Z", "event": "observation", "url": "http://127.0.0.1:8765/", "title": "Member Search", "step": 2}
+{"ts": "2026-09-14T22:14:28.732034Z", "event": "decision", "raw": {"type": "click", "target": {"role": "button", "name": "Search", "frame": ["work"]}, "reason": "search"}, "step": 2}
+{"ts": "2026-09-14T22:14:29.076232Z", "event": "action_result", "type": "click", "reason": "search", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45"}
+{"ts": "2026-09-14T22:14:29.105202Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45", "title": "Member ***45", "step": 3}
+{"ts": "2026-09-14T22:14:29.105411Z", "event": "decision", "raw": {"type": "click", "target": {"role": "button", "name": "Open New Sub-account"}, "reason": "start origination"}, "step": 3}
+{"ts": "2026-09-14T22:14:29.393992Z", "event": "action_result", "type": "click", "reason": "start origination", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:14:29.417262Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/new", "title": "Open New Sub-account", "step": 4}
+{"ts": "2026-09-14T22:14:29.417462Z", "event": "decision", "raw": {"type": "select", "target": {"role": "combobox", "name": "Account type"}, "value": "Savings", "reason": "choose type"}, "step": 4}
+{"ts": "2026-09-14T22:14:29.671177Z", "event": "action_result", "type": "select", "reason": "choose type", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:14:29.694228Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/new", "title": "Open New Sub-account", "step": 5}
+{"ts": "2026-09-14T22:14:29.694424Z", "event": "decision", "raw": {"type": "type", "target": {"role": "textbox", "placeholder": "Nickname"}, "value": "Vacation", "reason": "nickname"}, "step": 5}
+{"ts": "2026-09-14T22:14:29.935035Z", "event": "action_result", "type": "type", "reason": "nickname", "strategy": "placeholder", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:14:29.958551Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/new", "title": "Open New Sub-account", "step": 6}
+{"ts": "2026-09-14T22:14:29.958757Z", "event": "decision", "raw": {"type": "type", "target": {"role": "textbox", "placeholder": "0.00"}, "value": "500", "reason": "deposit"}, "step": 6}
+{"ts": "2026-09-14T22:14:30.196349Z", "event": "action_result", "type": "type", "reason": "deposit", "strategy": "placeholder", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:14:30.218709Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/new", "title": "Open New Sub-account", "step": 7}
+{"ts": "2026-09-14T22:14:30.218923Z", "event": "decision", "raw": {"type": "click", "target": {"role": "button", "name": "Review"}, "reason": "review"}, "step": 7}
+{"ts": "2026-09-14T22:14:30.521106Z", "event": "action_result", "type": "click", "reason": "review", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/review"}
+{"ts": "2026-09-14T22:14:30.534570Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/review", "title": "Review sub-account", "step": 8}
+{"ts": "2026-09-14T22:14:30.534797Z", "event": "decision", "raw": {"type": "click", "target": {"role": "button", "name": "Confirm Open Account"}, "reason": "confirm"}, "step": 8}
+{"ts": "2026-09-14T22:14:30.829093Z", "event": "action_result", "type": "click", "reason": "confirm", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/confirm"}
+{"ts": "2026-09-14T22:15:56.558300Z", "event": "navigate", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-14T22:15:56.659451Z", "event": "observation", "url": "http://127.0.0.1:8765/", "title": "Member Search", "step": 1}
+{"ts": "2026-09-14T22:15:56.659722Z", "event": "decision", "raw": {"type": "type", "target": {"role": "textbox", "name": "Member ID", "frame": ["work"]}, "value": "***45", "reason": "enter member"}, "step": 1}
+{"ts": "2026-09-14T22:15:56.963172Z", "event": "action_result", "type": "type", "reason": "enter member", "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-14T22:15:56.983651Z", "event": "observation", "url": "http://127.0.0.1:8765/", "title": "Member Search", "step": 2}
+{"ts": "2026-09-14T22:15:56.983854Z", "event": "decision", "raw": {"type": "click", "target": {"role": "button", "name": "Search", "frame": ["work"]}, "reason": "search"}, "step": 2}
+{"ts": "2026-09-14T22:15:57.299012Z", "event": "action_result", "type": "click", "reason": "search", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45"}
+{"ts": "2026-09-14T22:15:57.316622Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45", "title": "Member ***45", "step": 3}
+{"ts": "2026-09-14T22:15:57.316810Z", "event": "decision", "raw": {"type": "click", "target": {"role": "button", "name": "Open New Sub-account"}, "reason": "start origination"}, "step": 3}
+{"ts": "2026-09-14T22:15:57.617430Z", "event": "action_result", "type": "click", "reason": "start origination", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:15:57.646913Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/new", "title": "Open New Sub-account", "step": 4}
+{"ts": "2026-09-14T22:15:57.647317Z", "event": "decision", "raw": {"type": "select", "target": {"role": "combobox", "name": "Account type"}, "value": "Savings", "reason": "choose type"}, "step": 4}
+{"ts": "2026-09-14T22:15:57.893398Z", "event": "action_result", "type": "select", "reason": "choose type", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:15:57.915726Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/new", "title": "Open New Sub-account", "step": 5}
+{"ts": "2026-09-14T22:15:57.916046Z", "event": "decision", "raw": {"type": "type", "target": {"role": "textbox", "placeholder": "Nickname"}, "value": "Vacation", "reason": "nickname"}, "step": 5}
+{"ts": "2026-09-14T22:15:58.162516Z", "event": "action_result", "type": "type", "reason": "nickname", "strategy": "placeholder", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:15:58.186508Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/new", "title": "Open New Sub-account", "step": 6}
+{"ts": "2026-09-14T22:15:58.186730Z", "event": "decision", "raw": {"type": "type", "target": {"role": "textbox", "placeholder": "0.00"}, "value": "500", "reason": "deposit"}, "step": 6}
+{"ts": "2026-09-14T22:15:58.430128Z", "event": "action_result", "type": "type", "reason": "deposit", "strategy": "placeholder", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-14T22:15:58.451671Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/new", "title": "Open New Sub-account", "step": 7}
+{"ts": "2026-09-14T22:15:58.451881Z", "event": "decision", "raw": {"type": "click", "target": {"role": "button", "name": "Review"}, "reason": "review"}, "step": 7}
+{"ts": "2026-09-14T22:15:58.753943Z", "event": "action_result", "type": "click", "reason": "review", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/review"}
+{"ts": "2026-09-14T22:15:58.772178Z", "event": "observation", "url": "http://127.0.0.1:8765/members/***45/subaccount/review", "title": "Review sub-account", "step": 8}
+{"ts": "2026-09-14T22:15:58.772425Z", "event": "decision", "raw": {"type": "click", "target": {"role": "button", "name": "Confirm Open Account"}, "reason": "confirm"}, "step": 8}
+{"ts": "2026-09-14T22:15:59.066265Z", "event": "action_result", "type": "click", "reason": "confirm", "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/confirm"}
