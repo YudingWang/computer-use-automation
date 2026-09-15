@@ -1,17 +1,46 @@
 {
-  "intervention_id": "int_54a6a1921977",
-  "run_id": "run_28babb1a76c0",
+  "intervention_id": "int_2722fa0bc031",
+  "run_id": "run_146a02689db5",
   "capability_id": "open_subaccount",
   "step_id": "07_click_confirm_open_account",
   "reason": "step 07_click_confirm_open_account is risky and not auto-approved",
   "current_url": "http://127.0.0.1:8765/members/12345/subaccount/review",
   "screenshot_ref": "evidence/replay-human/escalation.png",
-  "expected": "The review shows the correct member, Savings account, Vacation nickname, and $500.00 initial deposit; confirm to create it.",
+  "expected": "The review shows the correct member, {{account_type}} account, {{nickname}} nickname, and ${{initial_deposit}}.00 initial deposit; confirm to create it.",
   "observed": null,
   "control_owner": "AUTOMATION",
   "state": "RESUMED",
-  "operator_url": "http://127.0.0.1:52200",
-  "created_at": "2026-09-15T23:28:45.490756Z",
+  "operator_url": "http://127.0.0.1:55515",
+  "created_at": "2026-09-15T23:50:15.452742Z",
   "human_took_control": true,
-  "human_events": []
+  "human_events": [
+    {
+      "actor": "human_browser",
+      "type": "click",
+      "tag": "INPUT",
+      "text": "Confirm Open Account",
+      "name": "Confirm Open Account"
+    },
+    {
+      "actor": "human_browser",
+      "type": "submit",
+      "tag": "INPUT",
+      "text": "Confirm Open Account",
+      "name": "Confirm Open Account"
+    },
+    {
+      "actor": "human_browser",
+      "type": "click",
+      "tag": "INPUT",
+      "text": "Confirm Open Account",
+      "name": "Confirm Open Account"
+    },
+    {
+      "actor": "human_browser",
+      "type": "submit",
+      "tag": "INPUT",
+      "text": "Confirm Open Account",
+      "name": "Confirm Open Account"
+    }
+  ]
 }

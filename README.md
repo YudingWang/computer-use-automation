@@ -97,6 +97,10 @@ python -m cuas replay \
 
 Without `--allow-risky`, replay pauses on **Confirm Open Account**. Click in the headed Playwright window (not a separately opened browser tab). Clicks are written to `intervention.json` as `human_events`.
 
+This uses **three terminals**: (1) demo-app, (2) replay — leave it blocked on `=== HUMAN HANDOFF ===`, (3) operator.
+
+Terminal 2:
+
 ```bash
 python -m cuas replay \
   --artifact artifacts/open_subaccount.v1.json \
@@ -108,12 +112,12 @@ python -m cuas replay \
   --evidence evidence/replay-human
 ```
 
-When it prints `=== HUMAN HANDOFF ===`:
+Terminal 3 — use the endpoint printed by terminal 2:
 
 ```bash
-python -m cuas operator take-control --endpoint <url printed by replay>
-# click Confirm Open Account in that headed window
-python -m cuas operator resume --endpoint <url printed by replay>
+python -m cuas operator take-control --endpoint http://127.0.0.1:<port>
+# click Confirm Open Account in the headed Playwright window
+python -m cuas operator resume --endpoint http://127.0.0.1:<port>
 ```
 
 ## Tests

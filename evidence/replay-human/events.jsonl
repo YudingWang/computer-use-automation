@@ -30,3 +30,25 @@
 {"ts": "2026-09-15T23:33:30.267417Z", "event": "resume", "intervention_id": "int_54a6a1921977"}
 {"ts": "2026-09-15T23:33:30.421345Z", "event": "step_completed_by_human", "step_id": "07_click_confirm_open_account"}
 {"ts": "2026-09-15T23:33:30.535528Z", "event": "replay_success", "outputs": {"confirmation_id": "CNF-2026-***05", "new_account_id": "SA-9005"}}
+{"ts": "2026-09-15T23:50:10.480895Z", "event": "replay_start", "run_id": "run_146a02689db5", "capability_id": "open_subaccount", "params": {"member_id": "***45", "nickname": "Handoff", "initial_deposit": "10"}}
+{"ts": "2026-09-15T23:50:13.671530Z", "event": "step_start", "step_id": "01_type_member_id", "action": "type", "value": "***45"}
+{"ts": "2026-09-15T23:50:13.950656Z", "event": "step_ok", "step_id": "01_type_member_id", "duration_ms": 327, "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-15T23:50:13.962140Z", "event": "step_start", "step_id": "02_click_search", "action": "click", "value": null}
+{"ts": "2026-09-15T23:50:14.282348Z", "event": "step_ok", "step_id": "02_click_search", "duration_ms": 332, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45"}
+{"ts": "2026-09-15T23:50:14.294941Z", "event": "step_start", "step_id": "03_click_open_new_sub_account", "action": "click", "value": null}
+{"ts": "2026-09-15T23:50:14.585521Z", "event": "step_ok", "step_id": "03_click_open_new_sub_account", "duration_ms": 303, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-15T23:50:14.597447Z", "event": "step_start", "step_id": "04_type_nickname", "action": "type", "value": "Handoff"}
+{"ts": "2026-09-15T23:50:14.823222Z", "event": "step_ok", "step_id": "04_type_nickname", "duration_ms": 238, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-15T23:50:14.830472Z", "event": "step_start", "step_id": "05_type_0_00", "action": "type", "value": "10"}
+{"ts": "2026-09-15T23:50:15.072543Z", "event": "step_ok", "step_id": "05_type_0_00", "duration_ms": 249, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/new"}
+{"ts": "2026-09-15T23:50:15.079423Z", "event": "step_start", "step_id": "06_click_review", "action": "click", "value": null}
+{"ts": "2026-09-15T23:50:15.372367Z", "event": "step_ok", "step_id": "06_click_review", "duration_ms": 299, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***45/subaccount/review"}
+{"ts": "2026-09-15T23:50:15.454452Z", "event": "escalation", "intervention_id": "int_2722fa0bc031", "reason": "step 07_click_confirm_open_account is risky and not auto-approved", "step_id": "07_click_confirm_open_account"}
+{"ts": "2026-09-15T23:51:45.406559Z", "event": "take_control", "intervention_id": "int_2722fa0bc031"}
+{"ts": "2026-09-15T23:51:49.259835Z", "event": "human_browser_event", "actor": "human_browser", "type": "click", "tag": "INPUT", "text": "Confirm Open Account", "name": "Confirm Open Account"}
+{"ts": "2026-09-15T23:51:49.280554Z", "event": "human_browser_event", "actor": "human_browser", "type": "submit", "tag": "INPUT", "text": "Confirm Open Account", "name": "Confirm Open Account"}
+{"ts": "2026-09-15T23:51:49.286392Z", "event": "human_browser_event", "actor": "human_browser", "type": "click", "tag": "INPUT", "text": "Confirm Open Account", "name": "Confirm Open Account"}
+{"ts": "2026-09-15T23:51:49.287887Z", "event": "human_browser_event", "actor": "human_browser", "type": "submit", "tag": "INPUT", "text": "Confirm Open Account", "name": "Confirm Open Account"}
+{"ts": "2026-09-15T23:52:04.146072Z", "event": "resume", "intervention_id": "int_2722fa0bc031"}
+{"ts": "2026-09-15T23:52:04.225967Z", "event": "step_completed_by_human", "step_id": "07_click_confirm_open_account"}
+{"ts": "2026-09-15T23:52:04.323308Z", "event": "replay_success", "outputs": {"confirmation_id": "CNF-2026-***07", "new_account_id": "SA-9007"}}
