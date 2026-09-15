@@ -20,7 +20,7 @@ load_dotenv(ROOT / ".env")
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="cuas",
-        description="Computer-use automation: discover once, replay without the LLM.",
+        description="Computer-use automation: discover once with an LLM, replay without one.",
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
@@ -28,7 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     demo.add_argument("--host", default=os.environ.get("CUAS_DEMO_HOST", "127.0.0.1"))
     demo.add_argument("--port", type=int, default=int(os.environ.get("CUAS_DEMO_PORT", "8765")))
 
-    disc = sub.add_parser("discover", help="LLM-driven observe → decide → act (requires XAI_API_KEY)")
+    disc = sub.add_parser("discover", help="Live LLM observe → decide → act (requires OPENAI_API_KEY)")
     disc.add_argument("--goal", required=True)
     disc.add_argument("--target", required=True)
     disc.add_argument("--param", action="append", default=[], help="key=value (parameterized into the artifact)")
@@ -36,37 +36,25 @@ def main(argv: list[str] | None = None) -> int:
     disc.add_argument("--headed", action="store_true")
     disc.add_argument("--out", default=str(ROOT / "artifacts" / "open_subaccount.v1.json"))
     disc.add_argument("--evidence", default=str(ROOT / "evidence" / "discovery"))
-    disc.add_argument("--scripted", action="store_true", help="Use the scripted teller instead of Grok (tests/demo)")
+    disc.add_argument("--model", default=None, help="OpenAI model (default: OPENAI_MODEL or gpt-4o)")
 
     replay = sub.add_parser("replay", help="Deterministic replay. No LLM.")
     replay.add_argument("--artifact", default=str(ROOT / "artifacts" / "open_subaccount.v1.json"))
     replay.add_argument("--input", action="append", default=[], help="key=value")
     replay.add_argument("--tenant", default=None)
-    replay.add_argument("--headed", action="store_true")
-    replay.add_argument("--allow-risky", action="store_true", help="Skip human approval on irreversible steps")
-    replay.add_argument("--auto-operator", action="store_true", help="Scripted human takes over the live session")
-    replay.add_argument("--wait-for-operator", action="store_true")
+    replay.add_argument("--headed", action="store_true", help="Open a visible browser; implies --wait-for-operator unless --allow-risky")
+    replay.add_argument("--allow-risky", action="store_true", help="Execute irreversible steps without a human")
+    replay.add_argument("--wait-for-operator", action="store_true", help="Pause on risky steps until take-control / resume")
     replay.add_argument("--evidence", default=None)
     replay.add_argument("--start-url", default=None)
 
-    inv = sub.add_parser("invoke", help="Invoke a named capability from the catalog")
-    inv.add_argument("capability_id")
-    inv.add_argument("--input", action="append", default=[])
-    inv.add_argument("--allow-risky", action="store_true")
-    inv.add_argument("--auto-operator", action="store_true")
-    inv.add_argument("--tenant", default=None)
-
-    sub.add_parser("catalog", help="List callable capabilities")
     inspect = sub.add_parser("inspect", help="Print a capability contract")
     inspect.add_argument("artifact")
 
-    op = sub.add_parser("operator", help="Operator commands against a paused run")
+    op = sub.add_parser("operator", help="Take or return control of a paused replay")
     op.add_argument("action", choices=["status", "take-control", "resume"])
-    op.add_argument("--endpoint", help="Operator URL from evidence/*/operator_endpoint.json")
-
-    golden = sub.add_parser("write-golden", help="Write the canonical artifact JSON")
-    golden.add_argument("--entry-url", default="http://127.0.0.1:8765/")
-    golden.add_argument("--out", default=str(ROOT / "artifacts" / "open_subaccount.v1.json"))
+    op.add_argument("--endpoint", help="Operator URL printed when replay pauses")
+    op.add_argument("--evidence", help="Evidence dir containing operator_endpoint.json")
 
     args = parser.parse_args(argv)
     if args.cmd == "demo-app":
@@ -75,16 +63,10 @@ def main(argv: list[str] | None = None) -> int:
         return asyncio.run(_discover(args))
     if args.cmd == "replay":
         return asyncio.run(_replay(args))
-    if args.cmd == "invoke":
-        return asyncio.run(_invoke(args))
-    if args.cmd == "catalog":
-        return _catalog()
     if args.cmd == "inspect":
         return _inspect(Path(args.artifact))
     if args.cmd == "operator":
-        return asyncio.run(_operator(args.action, args.endpoint))
-    if args.cmd == "write-golden":
-        return _write_golden(args.entry_url, Path(args.out))
+        return asyncio.run(_operator(args.action, args.endpoint, getattr(args, "evidence", None)))
     return 1
 
 
@@ -107,10 +89,30 @@ def _demo_app(host: str, port: int) -> int:
     return 0
 
 
-def _write_golden(entry_url: str, out: Path) -> int:
-    from cuas.capability.golden import open_subaccount_capability
+async def _discover(args: argparse.Namespace) -> int:
+    from cuas.agent.discovery import DiscoveryAgent
+    from cuas.agent.llm import OpenAIClient
 
-    cap = open_subaccount_capability(entry_url)
+    params = _kv(args.param)
+    evidence = Path(args.evidence)
+    client = OpenAIClient(model=args.model)
+    agent = DiscoveryAgent(client, evidence_dir=evidence, headed=args.headed)
+    result, events = await agent.run(args.goal, args.target)
+    agent.evidence.write_json("result.json", result.model_dump(mode="json"))
+    agent.evidence.write_json("trace.json", events)
+    print(json.dumps(result.model_dump(mode="json"), indent=2))
+    provenance_path = evidence / "provenance.json"
+    if provenance_path.exists():
+        print(f"provenance: {provenance_path}")
+    if result.status.value != "SUCCESS":
+        return 2
+    cap = agent.compile(
+        capability_id=args.capability_id,
+        description=args.goal,
+        params=params,
+        entry_url=args.target,
+    )
+    out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(cap.model_dump_json(indent=2) + "\n", encoding="utf-8")
     print(cap.summary())
@@ -118,98 +120,43 @@ def _write_golden(entry_url: str, out: Path) -> int:
     return 0
 
 
-async def _discover(args: argparse.Namespace) -> int:
-    from cuas.agent.discovery import DiscoveryAgent, default_open_subaccount_script
-    from cuas.agent.llm import ScriptedClient, XAIGrokClient
-    from cuas.capability.store import CapabilityStore
-
-    params = _kv(args.param)
-    evidence = Path(args.evidence)
-    if args.scripted:
-        client: Any = ScriptedClient(default_open_subaccount_script(params))
-    else:
-        client = XAIGrokClient()
-    agent = DiscoveryAgent(client, evidence_dir=evidence, headed=args.headed)
-    result, events = await agent.run(args.goal, args.target)
-    agent.evidence.write_json("result.json", result.model_dump(mode="json"))
-    agent.evidence.write_json("trace.json", events)
-    print(json.dumps(result.model_dump(mode="json"), indent=2))
-    if result.status.value == "SUCCESS":
-        cap = agent.compile(
-            capability_id=args.capability_id,
-            description=args.goal,
-            params=params,
-            entry_url=args.target,
-        )
-        out = Path(args.out)
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(cap.model_dump_json(indent=2) + "\n", encoding="utf-8")
-        CapabilityStore(ROOT / "artifacts").save(cap)
-        print(cap.summary())
-        print(f"wrote {out}")
-        return 0
-    return 2
-
-
 async def _replay(args: argparse.Namespace) -> int:
-    from cuas.capability.golden import approve_confirm_operator
     from cuas.capability.store import CapabilityStore
     from cuas.replay.executor import ReplayExecutor
-    from cuas.util import new_id
 
-    cap = CapabilityStore(ROOT / "artifacts").load(Path(args.artifact))
+    artifact = Path(args.artifact)
+    if not artifact.exists():
+        print(
+            f"No artifact at {artifact}. Run live discovery first:\n"
+            "  python -m cuas discover --goal '...' --target http://127.0.0.1:8765/ ...",
+            file=sys.stderr,
+        )
+        return 2
+    cap = CapabilityStore(artifact.parent).load(artifact)
     params = _kv(args.input)
-    evidence = Path(args.evidence) if args.evidence else ROOT / "evidence" / f"replay-{new_id('ev')}"
-    operator = approve_confirm_operator() if args.auto_operator else None
+    wait = bool(args.wait_for_operator or (args.headed and not args.allow_risky))
+    if args.evidence:
+        evidence = Path(args.evidence)
+    elif wait:
+        evidence = ROOT / "evidence" / "replay-human"
+    elif params.get("member_id") == "99999":
+        evidence = ROOT / "evidence" / "replay-not-found"
+    else:
+        evidence = ROOT / "evidence" / "replay-success"
     executor = ReplayExecutor(
         cap,
         params,
         evidence_dir=evidence,
         headed=args.headed,
         allow_risky=args.allow_risky,
-        wait_for_operator=args.wait_for_operator,
-        auto_operator=operator,
-        tenant_id=args.tenant,
+        wait_for_operator=wait,
         start_url=args.start_url,
+        tenant_id=args.tenant,
     )
     result = await executor.run()
     executor.evidence.write_json("result.json", result.model_dump(mode="json"))
     print(json.dumps(result.model_dump(mode="json"), indent=2))
     return 0 if result.ok() else 2
-
-
-async def _invoke(args: argparse.Namespace) -> int:
-    from types import SimpleNamespace
-
-    artifact = ROOT / "artifacts" / f"{args.capability_id}.v1.0.0.json"
-    if not artifact.exists():
-        artifact = ROOT / "artifacts" / f"{args.capability_id}.v1.json"
-    ns = SimpleNamespace(
-        artifact=str(artifact),
-        input=args.input,
-        tenant=args.tenant,
-        headed=False,
-        allow_risky=args.allow_risky,
-        auto_operator=args.auto_operator,
-        wait_for_operator=False,
-        evidence=str(ROOT / "evidence" / f"invoke-{args.capability_id}"),
-        start_url=None,
-    )
-    return await _replay(ns)
-
-
-def _catalog() -> int:
-    from cuas.capability.store import CapabilityStore
-
-    store = CapabilityStore(ROOT / "artifacts")
-    caps = store.list()
-    if not caps:
-        print("No capabilities in artifacts/. Run: python -m cuas write-golden")
-        return 0
-    for cap in caps:
-        print(cap.summary())
-        print()
-    return 0
 
 
 def _inspect(path: Path) -> int:
@@ -221,15 +168,14 @@ def _inspect(path: Path) -> int:
     return 0
 
 
-async def _operator(action: str, endpoint: str | None) -> int:
+async def _operator(action: str, endpoint: str | None, evidence: str | None) -> int:
     import httpx
 
     if not endpoint:
-        matches = sorted((ROOT / "evidence").glob("*/operator_endpoint.json"))
-        if not matches:
-            print("No operator endpoint found. Pass --endpoint.")
-            return 2
-        endpoint = json.loads(matches[-1].read_text())["url"]
+        endpoint = _find_operator_endpoint(Path(evidence) if evidence else None)
+    if not endpoint:
+        print("No operator endpoint. Pass --endpoint URL printed when replay paused.", file=sys.stderr)
+        return 2
     async with httpx.AsyncClient() as client:
         if action == "status":
             r = await client.get(f"{endpoint}/status")
@@ -240,6 +186,20 @@ async def _operator(action: str, endpoint: str | None) -> int:
         print(r.text)
         r.raise_for_status()
     return 0
+
+
+def _find_operator_endpoint(evidence: Path | None) -> str | None:
+    candidates: list[Path] = []
+    if evidence:
+        candidates.append(evidence / "operator_endpoint.json")
+    evidence_root = ROOT / "evidence"
+    if evidence_root.exists():
+        candidates.extend(evidence_root.glob("*/operator_endpoint.json"))
+    existing = [p for p in candidates if p.exists()]
+    if not existing:
+        return None
+    newest = max(existing, key=lambda p: p.stat().st_mtime)
+    return json.loads(newest.read_text()).get("url")
 
 
 if __name__ == "__main__":

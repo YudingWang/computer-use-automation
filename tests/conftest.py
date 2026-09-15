@@ -15,6 +15,9 @@ if str(ROOT) not in sys.path:
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
+TESTS = ROOT / "tests"
+if str(TESTS) not in sys.path:
+    sys.path.insert(0, str(TESTS))
 
 from cuas.util import free_port  # noqa: E402
 from demo_app.server import app  # noqa: E402

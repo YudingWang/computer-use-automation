@@ -88,6 +88,7 @@ class ReplayExecutor:
                     observed=(await self.surface.visible_text())[:400],
                     step_id=self.capability.implementation.steps[-1].id if self.capability.implementation.steps else None,
                 )
+            await self._screenshot("success.png")
             self.evidence.event("replay_success", outputs=self.outputs)
             return RunResult(
                 status=Status.SUCCESS,

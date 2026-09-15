@@ -3,13 +3,13 @@
   "id": "open_subaccount",
   "version": "1.0.0",
   "interface": {
-    "name": "Open Sub-account",
-    "description": "Look up a member and open a new sub-account through the confirmation screen.",
+    "name": "Open Subaccount",
+    "description": "Look up member 12345 and open a Savings sub-account named Vacation with initial deposit 500. Stop on the confirmation screen.",
     "inputs": {
       "member_id": {
         "type": "string",
         "required": true,
-        "description": "Member identifier",
+        "description": null,
         "sensitive": true,
         "minimum": null,
         "enum": null
@@ -20,10 +20,7 @@
         "description": null,
         "sensitive": false,
         "minimum": null,
-        "enum": [
-          "Savings",
-          "Money Market"
-        ]
+        "enum": null
       },
       "nickname": {
         "type": "string",
@@ -38,7 +35,7 @@
         "required": true,
         "description": null,
         "sensitive": false,
-        "minimum": 0.0,
+        "minimum": null,
         "enum": null
       }
     },
@@ -49,6 +46,11 @@
         "sensitive": false
       },
       "new_account_id": {
+        "type": "string",
+        "description": null,
+        "sensitive": false
+      },
+      "savings_balance": {
         "type": "string",
         "description": null,
         "sensitive": false
@@ -67,31 +69,20 @@
     "compatible_versions": [
       "1.0"
     ],
-    "tenants": [
-      {
-        "tenant_id": "eastside",
-        "label": "Eastside Community CU — same vendor product, different chrome",
-        "locator_overrides": {},
-        "text_overrides": {
-          "Member ID": "Member Number",
-          "Search": "Find Member",
-          "Open New Sub-account": "Open Sub Account"
-        }
-      }
-    ]
+    "tenants": []
   },
   "implementation": {
     "steps": [
       {
-        "id": "enter_member_id",
+        "id": "01_type_member_id",
         "action": "type",
-        "description": "Type the member id into the search workspace iframe.",
+        "description": "Enter the member ID to look up the member record.",
         "target": {
           "primary": {
             "strategy": "role_name",
             "role": "textbox",
             "name": "Member ID",
-            "text": null,
+            "text": "Member ID",
             "selector": null,
             "frame": [
               "work"
@@ -99,32 +90,7 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": [
-            {
-              "strategy": "text",
-              "role": null,
-              "name": null,
-              "text": "Member ID",
-              "selector": null,
-              "frame": [
-                "work"
-              ],
-              "nth": null,
-              "exact": true
-            },
-            {
-              "strategy": "label",
-              "role": null,
-              "name": "Member ID",
-              "text": null,
-              "selector": null,
-              "frame": [
-                "work"
-              ],
-              "nth": null,
-              "exact": true
-            }
-          ]
+          "fallbacks": []
         },
         "value": "{{member_id}}",
         "url": null,
@@ -138,19 +104,19 @@
           "pattern": null,
           "timeout_ms": 8000
         },
-        "risk": "safe",
+        "risk": "reversible",
         "timeout_ms": 8000
       },
       {
-        "id": "search_member",
+        "id": "02_click_search",
         "action": "click",
-        "description": "Submit member search.",
+        "description": "Submit member ID 12345 to open the member record.",
         "target": {
           "primary": {
             "strategy": "role_name",
             "role": "button",
             "name": "Search",
-            "text": null,
+            "text": "Search",
             "selector": null,
             "frame": [
               "work"
@@ -158,63 +124,7 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": [
-            {
-              "strategy": "text",
-              "role": null,
-              "name": null,
-              "text": "Search",
-              "selector": null,
-              "frame": [
-                "work"
-              ],
-              "nth": null,
-              "exact": true
-            }
-          ]
-        },
-        "value": null,
-        "url": null,
-        "key": null,
-        "extract_as": null,
-        "checkpoint": {
-          "kind": "visible_text",
-          "text": "Member detail",
-          "role": null,
-          "name": null,
-          "pattern": null,
-          "timeout_ms": 8000
-        },
-        "risk": "safe",
-        "timeout_ms": 8000
-      },
-      {
-        "id": "open_subaccount_form",
-        "action": "click",
-        "description": "Start sub-account origination.",
-        "target": {
-          "primary": {
-            "strategy": "role_name",
-            "role": "button",
-            "name": "Open New Sub-account",
-            "text": null,
-            "selector": null,
-            "frame": [],
-            "nth": null,
-            "exact": true
-          },
-          "fallbacks": [
-            {
-              "strategy": "text",
-              "role": null,
-              "name": null,
-              "text": "Open New Sub-account",
-              "selector": null,
-              "frame": [],
-              "nth": null,
-              "exact": true
-            }
-          ]
+          "fallbacks": []
         },
         "value": null,
         "url": null,
@@ -232,150 +142,117 @@
         "timeout_ms": 8000
       },
       {
-        "id": "select_account_type",
-        "action": "select",
-        "description": "Choose the share type.",
+        "id": "03_click_open_new_sub_account",
+        "action": "click",
+        "description": "Open the new sub-account form for member 12345.",
         "target": {
           "primary": {
             "strategy": "role_name",
-            "role": "combobox",
-            "name": "Account type",
-            "text": null,
+            "role": "button",
+            "name": "Open New Sub-account",
+            "text": "Open New Sub-account",
             "selector": null,
             "frame": [],
             "nth": null,
             "exact": true
           },
-          "fallbacks": [
-            {
-              "strategy": "text",
-              "role": null,
-              "name": null,
-              "text": "Account type",
-              "selector": null,
-              "frame": [],
-              "nth": null,
-              "exact": true
-            },
-            {
-              "strategy": "label",
-              "role": null,
-              "name": "Account type",
-              "text": null,
-              "selector": null,
-              "frame": [],
-              "nth": null,
-              "exact": true
-            }
-          ]
+          "fallbacks": []
         },
-        "value": "{{account_type}}",
+        "value": null,
         "url": null,
         "key": null,
         "extract_as": null,
-        "checkpoint": null,
+        "checkpoint": {
+          "kind": "visible_text",
+          "text": "Open New Sub-account",
+          "role": null,
+          "name": null,
+          "pattern": null,
+          "timeout_ms": 8000
+        },
         "risk": "reversible",
         "timeout_ms": 8000
       },
       {
-        "id": "enter_nickname",
+        "id": "04_type_nickname",
         "action": "type",
-        "description": "Nickname has no <label for>, so placeholder is primary.",
+        "description": "Enter the requested Savings sub-account nickname.",
         "target": {
           "primary": {
-            "strategy": "placeholder",
-            "role": null,
-            "name": null,
+            "strategy": "role_name",
+            "role": "textbox",
+            "name": "Nickname",
             "text": "Nickname",
             "selector": null,
             "frame": [],
             "nth": null,
             "exact": true
           },
-          "fallbacks": [
-            {
-              "strategy": "css",
-              "role": null,
-              "name": null,
-              "text": null,
-              "selector": "input[name='nickname']",
-              "frame": [],
-              "nth": null,
-              "exact": true
-            }
-          ]
+          "fallbacks": []
         },
         "value": "{{nickname}}",
         "url": null,
         "key": null,
         "extract_as": null,
-        "checkpoint": null,
+        "checkpoint": {
+          "kind": "visible_text",
+          "text": "Open New Sub-account",
+          "role": null,
+          "name": null,
+          "pattern": null,
+          "timeout_ms": 8000
+        },
         "risk": "reversible",
         "timeout_ms": 8000
       },
       {
-        "id": "enter_deposit",
+        "id": "05_type_0_00",
         "action": "type",
-        "description": "Initial deposit field is labelled only by adjacent table text.",
+        "description": "Enter the requested initial deposit of 500 before reviewing the new Savings sub-account.",
         "target": {
           "primary": {
-            "strategy": "placeholder",
-            "role": null,
-            "name": null,
+            "strategy": "role_name",
+            "role": "textbox",
+            "name": "0.00",
             "text": "0.00",
             "selector": null,
             "frame": [],
             "nth": null,
             "exact": true
           },
-          "fallbacks": [
-            {
-              "strategy": "css",
-              "role": null,
-              "name": null,
-              "text": null,
-              "selector": "input[name='initial_deposit']",
-              "frame": [],
-              "nth": null,
-              "exact": true
-            }
-          ]
+          "fallbacks": []
         },
         "value": "{{initial_deposit}}",
         "url": null,
         "key": null,
         "extract_as": null,
-        "checkpoint": null,
+        "checkpoint": {
+          "kind": "visible_text",
+          "text": "Open New Sub-account",
+          "role": null,
+          "name": null,
+          "pattern": null,
+          "timeout_ms": 8000
+        },
         "risk": "reversible",
         "timeout_ms": 8000
       },
       {
-        "id": "review",
+        "id": "06_click_review",
         "action": "click",
-        "description": "Move to the review screen.",
+        "description": "Review the completed Savings sub-account details before confirmation.",
         "target": {
           "primary": {
             "strategy": "role_name",
             "role": "button",
             "name": "Review",
-            "text": null,
+            "text": "Review",
             "selector": null,
             "frame": [],
             "nth": null,
             "exact": true
           },
-          "fallbacks": [
-            {
-              "strategy": "text",
-              "role": null,
-              "name": null,
-              "text": "Review",
-              "selector": null,
-              "frame": [],
-              "nth": null,
-              "exact": true
-            }
-          ]
+          "fallbacks": []
         },
         "value": null,
         "url": null,
@@ -393,32 +270,21 @@
         "timeout_ms": 8000
       },
       {
-        "id": "confirm_create",
+        "id": "07_click_confirm_open_account",
         "action": "click",
-        "description": "Irreversible origination. Gated by policy unless approved.",
+        "description": "The review shows the correct member, Savings account, Vacation nickname, and $500.00 initial deposit; confirm to create it.",
         "target": {
           "primary": {
             "strategy": "role_name",
             "role": "button",
             "name": "Confirm Open Account",
-            "text": null,
+            "text": "Confirm Open Account",
             "selector": null,
             "frame": [],
             "nth": null,
             "exact": true
           },
-          "fallbacks": [
-            {
-              "strategy": "text",
-              "role": null,
-              "name": null,
-              "text": "Confirm Open Account",
-              "selector": null,
-              "frame": [],
-              "nth": null,
-              "exact": true
-            }
-          ]
+          "fallbacks": []
         },
         "value": null,
         "url": null,
@@ -587,7 +453,7 @@
       "finish"
     ],
     "risky_step_ids": [
-      "confirm_create"
+      "07_click_confirm_open_account"
     ]
   }
 }

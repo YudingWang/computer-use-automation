@@ -118,6 +118,17 @@ class HandoffManager:
         if self.auto_operator and self._operator_task is None:
             self._operator_task = asyncio.create_task(self.auto_operator(self))
         if wait:
+            if not self.auto_operator:
+                endpoint = self.operator_url or ""
+                print(
+                    "\n=== HUMAN HANDOFF ===\n"
+                    f"Paused at step {step_id}: {reason}\n"
+                    "Leave the headed browser open. In another terminal:\n"
+                    f"  python -m cuas operator take-control --endpoint {endpoint}\n"
+                    "  Click Confirm Open Account in THAT browser window.\n"
+                    f"  python -m cuas operator resume --endpoint {endpoint}\n",
+                    flush=True,
+                )
             await self._resume.wait()
         return intervention
 

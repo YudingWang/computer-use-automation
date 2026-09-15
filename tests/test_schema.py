@@ -1,18 +1,18 @@
-from cuas.capability.golden import open_subaccount_capability
+from fixtures import open_subaccount_capability
 
 
-def test_golden_capability_is_typed_and_parameterized() -> None:
+def test_capability_schema_is_typed_and_parameterized() -> None:
     cap = open_subaccount_capability("http://127.0.0.1:8765/")
     dumped = cap.model_dump()
     assert dumped["schema_version"] == "1.0"
-    assert "member_id" in cap.interface.inputs
+    assert cap.interface.inputs["member_id"].type == "string"
     assert cap.interface.inputs["member_id"].sensitive
+    assert cap.interface.inputs["initial_deposit"].type == "number"
     values = [step.value for step in cap.implementation.steps if step.value]
     assert "{{member_id}}" in values
     assert "12345" not in str(dumped)
     assert cap.implementation.known_outcomes
     assert "confirm_create" in cap.policy.risky_step_ids
-    assert cap.binding.tenants[0].tenant_id == "eastside"
 
 
 def test_tenant_override_rewrites_search_chrome() -> None:

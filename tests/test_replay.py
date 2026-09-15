@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from cuas.capability.golden import approve_confirm_operator, open_subaccount_capability
+from fixtures import approve_confirm_operator, open_subaccount_capability
 from cuas.models.result import Status
 from cuas.replay.executor import ReplayExecutor
 

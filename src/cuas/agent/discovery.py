@@ -35,6 +35,7 @@ class DiscoveryAgent:
         self.surface = PlaywrightWebSurface(headed=headed)
         self.run_id = new_id("disc")
         self.events: list[dict[str, Any]] = []
+        self.llm_calls: list[dict[str, Any]] = []
 
     async def run(self, goal: str, start_url: str) -> tuple[RunResult, list[dict[str, Any]]]:
         await self.surface.start()
@@ -68,11 +69,13 @@ class DiscoveryAgent:
                 self.events.append(obs_payload)
                 self.evidence.event("observation", url=observation.url, title=observation.title, step=step)
 
-                raw = self.client.decide(
+                raw, provenance = self.client.decide(
                     SYSTEM_PROMPT,
                     user_prompt(goal, observation.compact(), history, step, self.max_steps),
                 )
-                self.evidence.event("decision", raw=raw, step=step)
+                call = {"step": step, **provenance}
+                self.llm_calls.append(call)
+                self.evidence.event("decision", raw=raw, step=step, llm=call)
                 action = parse_decision(raw, observation.controls)
                 control = _control_for(action, observation.controls)
                 policy = self.policy.check_action(action, current_url=observation.url)
@@ -171,7 +174,36 @@ class DiscoveryAgent:
                 self.events,
             )
         finally:
+            self._write_provenance()
             await self.surface.close()
+
+    def _write_provenance(self) -> None:
+        live = bool(getattr(self.client, "live", False))
+        total_tokens = 0
+        total_llm_ms = 0
+        for call in self.llm_calls:
+            total_llm_ms += int(call.get("latency_ms") or 0)
+            usage = call.get("usage") or {}
+            if isinstance(usage, dict) and usage.get("total_tokens"):
+                total_tokens += int(usage["total_tokens"])
+        self.evidence.write_json(
+            "provenance.json",
+            {
+                "run_id": self.run_id,
+                "live": live,
+                "provider": "openai" if live else "scripted",
+                "calls": self.llm_calls,
+                "call_count": len(self.llm_calls),
+                "total_llm_ms": total_llm_ms,
+                "total_tokens": total_tokens or None,
+                "openai_ids": [c.get("openai_id") for c in self.llm_calls if c.get("openai_id")],
+                "how_to_verify": (
+                    "Live runs have live=true, openai_id values like chatcmpl-…, "
+                    "non-zero token usage, and per-step latency typically hundreds of ms. "
+                    "Scripted runs have live=false, provider=scripted, openai_id=null."
+                ),
+            },
+        )
 
     def compile(
         self,
@@ -220,7 +252,7 @@ def _control_for(action: ActionSpec, controls: list[Control]) -> Control | None:
 
 
 def default_open_subaccount_script(params: dict[str, Any]) -> list[dict[str, Any]]:
-    """Scripted teller path used by tests. Live discovery uses Grok instead."""
+    """Scripted teller path used by tests. Live discovery uses OpenAI instead."""
     member_id = str(params.get("member_id", "12345"))
     nickname = str(params.get("nickname", "Vacation"))
     deposit = str(params.get("initial_deposit", "500"))

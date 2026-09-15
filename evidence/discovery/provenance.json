@@ -1,0 +1,139 @@
+{
+  "run_id": "disc_6c12822a64e9",
+  "live": true,
+  "provider": "openai",
+  "calls": [
+    {
+      "step": 1,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOWlc7dR50QoLIR4xRkulDZovriNV",
+      "created": 1789514536,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 2723,
+      "usage": {
+        "prompt_tokens": 566,
+        "completion_tokens": 76,
+        "total_tokens": 642
+      }
+    },
+    {
+      "step": 2,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOWlgwj4kheYFdj1HtSvNTw84MrDc",
+      "created": 1789514540,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 2697,
+      "usage": {
+        "prompt_tokens": 590,
+        "completion_tokens": 68,
+        "total_tokens": 658
+      }
+    },
+    {
+      "step": 3,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOWlisG4rmsV5PzYs8TUCkLhQEQza",
+      "created": 1789514542,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 1958,
+      "usage": {
+        "prompt_tokens": 898,
+        "completion_tokens": 69,
+        "total_tokens": 967
+      }
+    },
+    {
+      "step": 4,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOWlkhMDAzkpTzZI2qt9XrNhu3bGm",
+      "created": 1789514544,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 1650,
+      "usage": {
+        "prompt_tokens": 581,
+        "completion_tokens": 60,
+        "total_tokens": 641
+      }
+    },
+    {
+      "step": 5,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOWlm2cOHt61p06mY9AMzIhPNBH16",
+      "created": 1789514546,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 1618,
+      "usage": {
+        "prompt_tokens": 594,
+        "completion_tokens": 68,
+        "total_tokens": 662
+      }
+    },
+    {
+      "step": 6,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOWloGOzlDmRqJKCAF6Q63AP6U4yE",
+      "created": 1789514548,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 1554,
+      "usage": {
+        "prompt_tokens": 612,
+        "completion_tokens": 70,
+        "total_tokens": 682
+      }
+    },
+    {
+      "step": 7,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOWlquRo6Js3rDJp22fPIRaZv8DL6",
+      "created": 1789514550,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 1953,
+      "usage": {
+        "prompt_tokens": 575,
+        "completion_tokens": 83,
+        "total_tokens": 658
+      }
+    }
+  ],
+  "call_count": 7,
+  "total_llm_ms": 14153,
+  "total_tokens": 4910,
+  "openai_ids": [
+    "chatcmpl-EOWlc7dR50QoLIR4xRkulDZovriNV",
+    "chatcmpl-EOWlgwj4kheYFdj1HtSvNTw84MrDc",
+    "chatcmpl-EOWlisG4rmsV5PzYs8TUCkLhQEQza",
+    "chatcmpl-EOWlkhMDAzkpTzZI2qt9XrNhu3bGm",
+    "chatcmpl-EOWlm2cOHt61p06mY9AMzIhPNBH16",
+    "chatcmpl-EOWloGOzlDmRqJKCAF6Q63AP6U4yE",
+    "chatcmpl-EOWlquRo6Js3rDJp22fPIRaZv8DL6"
+  ],
+  "how_to_verify": "Live runs have live=true, openai_id values like chatcmpl-\u2026, non-zero token usage, and per-step latency typically hundreds of ms. Scripted runs have live=false, provider=scripted, openai_id=null."
+}

@@ -1,8 +1,4 @@
-"""Canonical open_subaccount capability.
-
-Hand-authored against the local console so replay and tests do not depend on an
-LLM. Live discovery compiles an equivalent artifact from a real trace.
-"""
+"""Test-only capability and operator. Production artifacts come from the compiler."""
 
 from __future__ import annotations
 
@@ -190,7 +186,7 @@ def open_subaccount_capability(entry_url: str) -> Capability:
 
 
 def approve_confirm_operator():
-    """Scripted operator: take the live session, click confirm, hand it back."""
+    """Test-only: take the live session, click confirm, hand it back."""
 
     async def _run(handoff) -> None:
         import asyncio

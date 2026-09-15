@@ -55,9 +55,9 @@
       "value": "12345",
       "url": null,
       "key": null,
-      "reason": "enter member",
+      "reason": "Enter the member ID to look up the member record.",
       "extract_as": null,
-      "outputs": null,
+      "outputs": {},
       "goal_complete": false
     },
     "control": {
@@ -131,9 +131,9 @@
       "value": null,
       "url": null,
       "key": null,
-      "reason": "search",
+      "reason": "Submit member ID 12345 to open the member record.",
       "extract_as": null,
-      "outputs": null,
+      "outputs": {},
       "goal_complete": false
     },
     "control": {
@@ -210,9 +210,9 @@
       "value": null,
       "url": null,
       "key": null,
-      "reason": "start origination",
+      "reason": "Open the new sub-account form for member 12345.",
       "extract_as": null,
-      "outputs": null,
+      "outputs": {},
       "goal_complete": false
     },
     "control": {
@@ -279,98 +279,12 @@
   {
     "event": "action_result",
     "action": {
-      "type": "select",
-      "target": {
-        "primary": {
-          "strategy": "role_name",
-          "role": "combobox",
-          "name": "Account type",
-          "text": "Account type",
-          "selector": null,
-          "frame": [],
-          "nth": null,
-          "exact": true
-        },
-        "fallbacks": []
-      },
-      "value": "Savings",
-      "url": null,
-      "key": null,
-      "reason": "choose type",
-      "extract_as": null,
-      "outputs": null,
-      "goal_complete": false
-    },
-    "control": {
-      "index": 3,
-      "role": "combobox",
-      "name": "Account type",
-      "value": "Savings",
-      "frame": [],
-      "placeholder": null,
-      "enabled": true
-    },
-    "result": {
-      "ok": true,
-      "strategy": "role_name",
-      "url": "http://127.0.0.1:8765/members/12345/subaccount/new"
-    },
-    "title_after": "Open New Sub-account",
-    "visible_after": "CU*CORE Teller Services \u2014 Region 4\nSummit Valley Credit Union \u00a0|\u00a0 operator: STAFF01 \u00a0|\u00a0 env: UAT\n\nOpen New Sub-account for Alice Chen\n\nAccount type\t\nSavings\nMoney Market\n\nNickname\t\nInitial deposit"
-  },
-  {
-    "event": "observation",
-    "url": "http://127.0.0.1:8765/members/12345/subaccount/new",
-    "title": "Open New Sub-account",
-    "visible_text": "CU*CORE Teller Services \u2014 Region 4\nSummit Valley Credit Union \u00a0|\u00a0 operator: STAFF01 \u00a0|\u00a0 env: UAT\n\nOpen New Sub-account for Alice Chen\n\nAccount type\t\nSavings\nMoney Market\n\nNickname\t\nInitial deposit",
-    "controls": [
-      {
-        "index": 0,
-        "role": "button",
-        "name": "Review",
-        "value": "Review",
-        "frame": [],
-        "placeholder": null,
-        "enabled": true
-      },
-      {
-        "index": 1,
-        "role": "textbox",
-        "name": "Nickname",
-        "value": "",
-        "frame": [],
-        "placeholder": "Nickname",
-        "enabled": true
-      },
-      {
-        "index": 2,
-        "role": "textbox",
-        "name": "0.00",
-        "value": "",
-        "frame": [],
-        "placeholder": "0.00",
-        "enabled": true
-      },
-      {
-        "index": 3,
-        "role": "combobox",
-        "name": "Account type",
-        "value": "Savings",
-        "frame": [],
-        "placeholder": null,
-        "enabled": true
-      }
-    ]
-  },
-  {
-    "event": "action_result",
-    "action": {
       "type": "type",
       "target": {
         "primary": {
-          "strategy": "placeholder",
+          "strategy": "role_name",
           "role": "textbox",
-          "name": null,
+          "name": "Nickname",
           "text": "Nickname",
           "selector": null,
           "frame": [],
@@ -382,7 +296,7 @@
       "value": "Vacation",
       "url": null,
       "key": null,
-      "reason": "nickname",
+      "reason": "Enter the requested Savings sub-account nickname.",
       "extract_as": null,
       "outputs": null,
       "goal_complete": false
@@ -398,7 +312,7 @@
     },
     "result": {
       "ok": true,
-      "strategy": "placeholder",
+      "strategy": "role_name",
       "url": "http://127.0.0.1:8765/members/12345/subaccount/new"
     },
     "title_after": "Open New Sub-account",
@@ -454,9 +368,9 @@
       "type": "type",
       "target": {
         "primary": {
-          "strategy": "placeholder",
+          "strategy": "role_name",
           "role": "textbox",
-          "name": null,
+          "name": "0.00",
           "text": "0.00",
           "selector": null,
           "frame": [],
@@ -468,9 +382,9 @@
       "value": "500",
       "url": null,
       "key": null,
-      "reason": "deposit",
+      "reason": "Enter the requested initial deposit of 500 before reviewing the new Savings sub-account.",
       "extract_as": null,
-      "outputs": null,
+      "outputs": {},
       "goal_complete": false
     },
     "control": {
@@ -484,7 +398,7 @@
     },
     "result": {
       "ok": true,
-      "strategy": "placeholder",
+      "strategy": "role_name",
       "url": "http://127.0.0.1:8765/members/12345/subaccount/new"
     },
     "title_after": "Open New Sub-account",
@@ -554,9 +468,9 @@
       "value": null,
       "url": null,
       "key": null,
-      "reason": "review",
+      "reason": "Review the completed Savings sub-account details before confirmation.",
       "extract_as": null,
-      "outputs": null,
+      "outputs": {},
       "goal_complete": false
     },
     "control": {
@@ -613,9 +527,9 @@
       "value": null,
       "url": null,
       "key": null,
-      "reason": "confirm",
+      "reason": "The review shows the correct member, Savings account, Vacation nickname, and $500.00 initial deposit; confirm to create it.",
       "extract_as": null,
-      "outputs": null,
+      "outputs": {},
       "goal_complete": false
     },
     "control": {
@@ -633,6 +547,6 @@
       "url": "http://127.0.0.1:8765/members/12345/subaccount/confirm"
     },
     "title_after": "Account successfully created",
-    "visible_after": "CU*CORE Teller Services \u2014 Region 4\nSummit Valley Credit Union \u00a0|\u00a0 operator: STAFF01 \u00a0|\u00a0 env: UAT\n\nAccount successfully created\n\nField\tValue\nConfirmation ID\tCNF-2026-01003\nNew account\tSA-9003\nMember ID\t12345\nNickname\tVacation\nInitial deposit\t500.00\n\nBack to member"
+    "visible_after": "CU*CORE Teller Services \u2014 Region 4\nSummit Valley Credit Union \u00a0|\u00a0 operator: STAFF01 \u00a0|\u00a0 env: UAT\n\nAccount successfully created\n\nField\tValue\nConfirmation ID\tCNF-2026-01001\nNew account\tSA-9001\nMember ID\t12345\nNickname\tVacation\nInitial deposit\t500.00\n\nBack to member"
   }
 ]

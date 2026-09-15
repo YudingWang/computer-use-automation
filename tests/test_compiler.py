@@ -33,11 +33,13 @@ def test_compiler_parameterizes_typed_values() -> None:
         events,
         capability_id="lookup_member",
         description="Look up a member",
-        params={"member_id": "12345"},
+        params={"member_id": "12345", "initial_deposit": "500"},
         entry_url="http://127.0.0.1:8765/",
     )
     assert cap.implementation.steps[0].value == "{{member_id}}"
     assert cap.implementation.steps[0].action is ActionType.TYPE
+    assert cap.interface.inputs["member_id"].type == "string"
+    assert cap.interface.inputs["initial_deposit"].type == "number"
     assert "MEMBER_NOT_FOUND" in cap.interface.outcomes
     assert "{{member_id}}" in cap.model_dump_json()
     assert "12345" not in cap.implementation.steps[0].value

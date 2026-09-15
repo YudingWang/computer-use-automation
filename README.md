@@ -1,50 +1,55 @@
 # Computer-Use Automation System
 
-Take-home for interface.ai: an LLM discovers how to operate a legacy credit-union console **once**. The successful run is compiled into a typed, versioned **capability**. Production invocation is **deterministic replay** — no model in the decision loop — with explicit business outcomes, bounded recovery, policy guardrails, and a real same-session human handoff.
+interface.ai take-home: an LLM discovers how to operate a legacy credit-union console **once**. The successful run is compiled into a typed capability. Production invocation is **deterministic replay** — no model in the decision loop.
 
 ```
-goal → observe/decide/act (Grok) → capability artifact → replay(params) → SUCCESS | BUSINESS_OUTCOME | HUMAN_REQUIRED
+live LLM discovery → compiler → artifacts/open_subaccount.v1.json → replay(params) → no LLM
 ```
+
+## Architecture
+
+```
+python -m cuas discover          observe → OpenAI → policy → act → compile
+        │
+        ▼
+artifacts/open_subaccount.v1.json     typed inputs/outputs, locator chain, checkpoints
+        │
+        ▼
+python -m cuas replay            no LLM; locators + checkpoints + outcome detectors
+        │
+        └── risky Confirm ──► pause same headed browser
+                              operator take-control → human clicks → resume
+```
+
+Cross-cutting: `surface/` (Playwright), `safety/policy.py`, `safety/redaction.py`, `observability/`.
+
+Target UI is `demo_app/` — iframe search, generated IDs, nested tables, not-found / restricted / validation / interstitial.
 
 ## Setup
 
-Requires Python 3.11+ and Chromium (Playwright).
+Python 3.11+, Chromium, OpenAI key (discovery only).
 
 ```bash
+cd /Users/yh-yao/Downloads/computer-use-automation
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate          # prompt should show (.venv), not anaconda
+which python                       # must be .../computer-use-automation/.venv/bin/python
 pip install -e ".[dev]"
 playwright install chromium
-python -m cuas write-golden --entry-url http://127.0.0.1:8765/
+cp .env.example .env               # set OPENAI_API_KEY
 ```
 
-Discovery talks to [xAI Grok](https://docs.x.ai) (`grok-4.6`) via `XAI_API_KEY`. Copy `.env.example` to `.env` and fill the key. Replay, tests, and the demo console do **not** need a model.
+Every later command in this README assumes that venv is active. If `python -m cuas` says `No module named cuas`, you are on the wrong interpreter.
 
-```bash
-cp .env.example .env   # then set XAI_API_KEY
-```
+## Live discovery
 
-## Demo path
-
-Terminal 1 — start the local back-office console (hostile markup, iframe, generated IDs, no test IDs):
+Terminal 1:
 
 ```bash
 python -m cuas demo-app --port 8765
 ```
 
-The console is at http://127.0.0.1:8765/. Synthetic members:
-
-| Member ID | What happens |
-|-----------|----------------|
-| `12345` | Alice Chen, active — happy path |
-| `67890` | Bob Rivera, active — second invocation |
-| `24680` | Priya Nair, restricted — `MEMBER_RESTRICTED` |
-| `99999` | `MEMBER_NOT_FOUND` |
-| deposit `< 0` | inline validation → `VALIDATION_ERROR` |
-| `?simulate=interstitial` | unexpected System Notice (dismiss + continue) |
-| `?brand=eastside` | same vendor product, relabeled chrome |
-
-Terminal 2 — **discover** (live LLM; this is the required genuine computer-use run):
+Terminal 2 — this is the required genuine LLM run. It writes `evidence/discovery/` and compiles `artifacts/open_subaccount.v1.json`.
 
 ```bash
 python -m cuas discover \
@@ -54,23 +59,15 @@ python -m cuas discover \
   --param account_type=Savings \
   --param nickname=Vacation \
   --param initial_deposit=500 \
-  --capability-id open_subaccount \
   --out artifacts/open_subaccount.v1.json \
   --evidence evidence/discovery
 ```
 
-Without a live key, the same loop can be exercised with a scripted teller (not a substitute for the Grok run above):
+A live run is proven by `evidence/discovery/provenance.json`: `"live": true`, `openai_id` values like `chatcmpl-…`, non-zero token usage. The API key is never stored.
 
-```bash
-python -m cuas discover --scripted \
-  --goal "Open a savings sub-account named Vacation for member 12345 with initial deposit 500" \
-  --target http://127.0.0.1:8765/ \
-  --param member_id=12345 --param account_type=Savings \
-  --param nickname=Vacation --param initial_deposit=500 \
-  --evidence evidence/discovery-scripted
-```
+## Deterministic replay (no LLM)
 
-**Replay** the artifact for a different member. `--auto-operator` is the production-shaped path: the irreversible confirm is *not* auto-approved; a human (here, a scripted operator) takes the **same live Playwright session**, clicks confirm, and hands control back.
+Uses the artifact from discovery. Different member:
 
 ```bash
 python -m cuas replay \
@@ -79,11 +76,11 @@ python -m cuas replay \
   --input account_type=Savings \
   --input nickname=RainyDay \
   --input initial_deposit=250 \
-  --auto-operator \
+  --allow-risky \
   --evidence evidence/replay-success
 ```
 
-Not-found is a **business outcome**, not a crash:
+`--allow-risky` is for unattended happy-path capture. Member not found is a business outcome, not a crash:
 
 ```bash
 python -m cuas replay \
@@ -96,62 +93,51 @@ python -m cuas replay \
   --evidence evidence/replay-not-found
 ```
 
-Same-vendor tenant variant (Eastside labels: "Member Number" / "Find Member"):
+## Manual human handoff
+
+Replay pauses on irreversible **Confirm Open Account**. The headed Playwright window **stays open**; you click in that same window.
+
+Terminal 2:
 
 ```bash
 python -m cuas replay \
   --artifact artifacts/open_subaccount.v1.json \
-  --tenant eastside \
-  --start-url "http://127.0.0.1:8765/?brand=eastside" \
-  --input member_id=12345 --input account_type=Savings \
-  --input nickname=East --input initial_deposit=50 \
-  --auto-operator
+  --input member_id=12345 \
+  --input account_type=Savings \
+  --input nickname=Handoff \
+  --input initial_deposit=10 \
+  --headed \
+  --wait-for-operator \
+  --evidence evidence/replay-human
 ```
 
-Agent-facing catalog:
+When it prints `=== HUMAN HANDOFF ===`, Terminal 3:
 
 ```bash
-python -m cuas catalog
-python -m cuas invoke open_subaccount \
-  --input member_id=12345 --input account_type=Savings \
-  --input nickname=Catalog --input initial_deposit=10 \
-  --auto-operator
+python -m cuas operator take-control --endpoint <url printed by replay>
+# click Confirm Open Account in the headed browser
+python -m cuas operator resume --endpoint <url printed by replay>
 ```
 
-Paused runs expose a loopback operator API (URL is in `evidence/<run>/operator_endpoint.json`):
+`--headed` keeps the live session visible and waits for the operator. Do not close the browser.
 
-```bash
-python -m cuas operator status
-python -m cuas operator take-control
-python -m cuas operator resume
-```
-
-## Tests (no LLM)
+## Tests
 
 ```bash
 pytest -q
 ```
 
-## Layout
-
-```
-demo_app/                 local CU*CORE console (the target surface)
-src/cuas/
-  models/                 capability schema, actions, results
-  surface/                SurfaceAdapter + Playwright web implementation
-  agent/                  discovery loop, Grok client, prompts
-  capability/             compiler, store, golden artifact
-  replay/                 deterministic executor
-  safety/                 allowlist + risk classes + redaction
-  handoff/                control lease + operator API
-  observability/          JSONL evidence
-artifacts/                versioned capabilities
-evidence/                 discovery + replay traces
-REPORT.md                 design write-up
-```
+No OpenAI key required. Scripted LLM client is a **test fixture only**.
 
 ## Evidence
 
-See [`evidence/README.md`](evidence/README.md). Checked in: a successful discovery trace, a parameterized artifact, a no-LLM replay with extracted `confirmation_id`, a `MEMBER_NOT_FOUND` business outcome (with screenshot), and a same-session human handoff on the irreversible confirm.
+Generate after live discovery / replay (do not commit placeholders):
 
-Secrets never go in the repo. Demo data is synthetic. Member ids are masked in logs (`12345` → `***45`).
+| Path | Source |
+|------|--------|
+| `evidence/discovery/` | live `discover` — provenance, events, trace, result, screenshots |
+| `evidence/replay-success/` | `replay` with a different member |
+| `evidence/replay-not-found/` | `replay` with `member_id=99999` |
+| `evidence/replay-human/` | headed handoff — intervention, events, result, screenshots |
+
+`REPORT.md` is the design write-up.

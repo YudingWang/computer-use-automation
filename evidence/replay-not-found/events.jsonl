@@ -1,5 +1,5 @@
-{"ts": "2026-09-14T22:14:34.275137Z", "event": "replay_start", "run_id": "run_3694bcc35521", "capability_id": "open_subaccount", "params": {"member_id": "***99", "account_type": "Savings", "nickname": "X", "initial_deposit": "1"}}
-{"ts": "2026-09-14T22:14:34.896935Z", "event": "step_start", "step_id": "enter_member_id", "action": "type", "value": "***99"}
-{"ts": "2026-09-14T22:14:35.158726Z", "event": "step_ok", "step_id": "enter_member_id", "duration_ms": 289, "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
-{"ts": "2026-09-14T22:14:35.170278Z", "event": "step_start", "step_id": "search_member", "action": "click", "value": null}
-{"ts": "2026-09-14T22:14:35.433611Z", "event": "business_outcome", "code": "MEMBER_NOT_FOUND", "step_id": "search_member"}
+{"ts": "2026-09-15T23:23:17.619037Z", "event": "replay_start", "run_id": "run_3330e9299557", "capability_id": "open_subaccount", "params": {"member_id": "***99", "account_type": "Savings", "nickname": "X", "initial_deposit": "1"}}
+{"ts": "2026-09-15T23:23:18.294284Z", "event": "step_start", "step_id": "01_type_member_id", "action": "type", "value": "***99"}
+{"ts": "2026-09-15T23:23:18.567023Z", "event": "step_ok", "step_id": "01_type_member_id", "duration_ms": 304, "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-15T23:23:18.584823Z", "event": "step_start", "step_id": "02_click_search", "action": "click", "value": null}
+{"ts": "2026-09-15T23:23:18.859764Z", "event": "business_outcome", "code": "MEMBER_NOT_FOUND", "step_id": "02_click_search"}

@@ -33,7 +33,6 @@ from cuas.models.capability import (
     InputParam,
     OutputField,
     Step,
-    TenantOverride,
 )
 from cuas.models.observation import Control
 from cuas.util import values_match
@@ -107,9 +106,9 @@ def compile_trace(
 
     inputs = input_meta or {
         key: InputParam(
-            type="number" if _looks_number(val) else "string",
+            type=_input_type(key, val),
             required=True,
-            sensitive=key in sensitive,
+            sensitive=key in sensitive or key.lower().endswith("_id"),
         )
         for key, val in params.items()
     }
@@ -141,18 +140,6 @@ def compile_trace(
             success = Checkpoint(kind=CheckpointKind.VISIBLE_TEXT, text="Account successfully created")
             break
 
-    tenants = [
-        TenantOverride(
-            tenant_id="eastside",
-            label="Eastside Community CU (same vendor, different chrome)",
-            text_overrides={
-                "Member ID": "Member Number",
-                "Search": "Find Member",
-                "Open New Sub-account": "Open Sub Account",
-            },
-        )
-    ]
-
     return Capability(
         id=capability_id,
         version="1.0.0",
@@ -168,7 +155,7 @@ def compile_trace(
             surface="web",
             entry_url=entry_url,
             compatible_versions=["1.0"],
-            tenants=tenants,
+            tenants=[],
         ),
         implementation=Implementation(
             steps=steps,
@@ -253,6 +240,18 @@ def _default_risk(action_type: ActionType) -> RiskClass:
     if action_type in {ActionType.TYPE, ActionType.SELECT, ActionType.CLICK, ActionType.PRESS, ActionType.NAVIGATE}:
         return RiskClass.REVERSIBLE
     return RiskClass.REVERSIBLE
+
+
+def _input_type(key: str, value: Any) -> str:
+    """IDs stay strings even when they are all digits. Amounts are numbers."""
+    key_l = key.lower()
+    if key_l.endswith("_id") or key_l in {"id", "ssn"}:
+        return "string"
+    if key_l.endswith(("_deposit", "_amount", "_balance")) or key_l == "initial_deposit":
+        return "number"
+    if _looks_number(value):
+        return "number"
+    return "string"
 
 
 def _looks_number(value: Any) -> bool:
