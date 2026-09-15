@@ -31,6 +31,9 @@ async def test_scripted_discovery_compiles_parameterized_artifact(tmp_path: Path
     assert "12345" not in "".join(s.value or "" for s in cap.implementation.steps)
     assert cap.interface.inputs["member_id"].type == "string"
     assert cap.interface.inputs["initial_deposit"].type == "number"
+    assert "account_type" in cap.interface.inputs
+    assert "savings_balance" not in cap.interface.outputs
+    assert cap.implementation.steps[0].target and cap.implementation.steps[0].target.fallbacks
     assert cap.implementation.steps
     assert any(s.risk.value == "risky" for s in cap.implementation.steps)
 

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "interface": {
     "name": "Open Subaccount",
-    "description": "Look up member 12345 and open a Savings sub-account named Vacation with initial deposit 500. Stop on the confirmation screen.",
+    "description": "Look up a member, open a sub-account, and confirm creating the account.",
     "inputs": {
       "member_id": {
         "type": "string",
@@ -16,7 +16,7 @@
       },
       "account_type": {
         "type": "string",
-        "required": true,
+        "required": false,
         "description": null,
         "sensitive": false,
         "minimum": null,
@@ -46,11 +46,6 @@
         "sensitive": false
       },
       "new_account_id": {
-        "type": "string",
-        "description": null,
-        "sensitive": false
-      },
-      "savings_balance": {
         "type": "string",
         "description": null,
         "sensitive": false
@@ -90,7 +85,44 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": []
+          "fallbacks": [
+            {
+              "strategy": "text",
+              "role": null,
+              "name": null,
+              "text": "Member ID",
+              "selector": null,
+              "frame": [
+                "work"
+              ],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "label",
+              "role": null,
+              "name": "Member ID",
+              "text": null,
+              "selector": null,
+              "frame": [
+                "work"
+              ],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "placeholder",
+              "role": null,
+              "name": null,
+              "text": "Member ID",
+              "selector": null,
+              "frame": [
+                "work"
+              ],
+              "nth": null,
+              "exact": true
+            }
+          ]
         },
         "value": "{{member_id}}",
         "url": null,
@@ -110,7 +142,7 @@
       {
         "id": "02_click_search",
         "action": "click",
-        "description": "Submit member ID 12345 to open the member record.",
+        "description": "Submit member ID {{member_id}} to open the member record.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -124,7 +156,44 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": []
+          "fallbacks": [
+            {
+              "strategy": "text",
+              "role": null,
+              "name": null,
+              "text": "Search",
+              "selector": null,
+              "frame": [
+                "work"
+              ],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "label",
+              "role": null,
+              "name": "Search",
+              "text": null,
+              "selector": null,
+              "frame": [
+                "work"
+              ],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "placeholder",
+              "role": null,
+              "name": null,
+              "text": "Search",
+              "selector": null,
+              "frame": [
+                "work"
+              ],
+              "nth": null,
+              "exact": true
+            }
+          ]
         },
         "value": null,
         "url": null,
@@ -144,7 +213,7 @@
       {
         "id": "03_click_open_new_sub_account",
         "action": "click",
-        "description": "Open the new sub-account form for member 12345.",
+        "description": "Open the new sub-account form for member {{member_id}}.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -156,7 +225,38 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": []
+          "fallbacks": [
+            {
+              "strategy": "text",
+              "role": null,
+              "name": null,
+              "text": "Open New Sub-account",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "label",
+              "role": null,
+              "name": "Open New Sub-account",
+              "text": null,
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "placeholder",
+              "role": null,
+              "name": null,
+              "text": "Open New Sub-account",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            }
+          ]
         },
         "value": null,
         "url": null,
@@ -176,7 +276,7 @@
       {
         "id": "04_type_nickname",
         "action": "type",
-        "description": "Enter the requested Savings sub-account nickname.",
+        "description": "Enter the requested {{account_type}} sub-account nickname.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -188,7 +288,38 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": []
+          "fallbacks": [
+            {
+              "strategy": "text",
+              "role": null,
+              "name": null,
+              "text": "Nickname",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "label",
+              "role": null,
+              "name": "Nickname",
+              "text": null,
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "placeholder",
+              "role": null,
+              "name": null,
+              "text": "Nickname",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            }
+          ]
         },
         "value": "{{nickname}}",
         "url": null,
@@ -208,7 +339,7 @@
       {
         "id": "05_type_0_00",
         "action": "type",
-        "description": "Enter the requested initial deposit of 500 before reviewing the new Savings sub-account.",
+        "description": "Enter the requested initial deposit of {{initial_deposit}} before reviewing the new {{account_type}} sub-account.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -220,7 +351,38 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": []
+          "fallbacks": [
+            {
+              "strategy": "text",
+              "role": null,
+              "name": null,
+              "text": "0.00",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "label",
+              "role": null,
+              "name": "0.00",
+              "text": null,
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "placeholder",
+              "role": null,
+              "name": null,
+              "text": "0.00",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            }
+          ]
         },
         "value": "{{initial_deposit}}",
         "url": null,
@@ -240,7 +402,7 @@
       {
         "id": "06_click_review",
         "action": "click",
-        "description": "Review the completed Savings sub-account details before confirmation.",
+        "description": "Review the completed {{account_type}} sub-account details before confirmation.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -252,7 +414,38 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": []
+          "fallbacks": [
+            {
+              "strategy": "text",
+              "role": null,
+              "name": null,
+              "text": "Review",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "label",
+              "role": null,
+              "name": "Review",
+              "text": null,
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "placeholder",
+              "role": null,
+              "name": null,
+              "text": "Review",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            }
+          ]
         },
         "value": null,
         "url": null,
@@ -272,7 +465,7 @@
       {
         "id": "07_click_confirm_open_account",
         "action": "click",
-        "description": "The review shows the correct member, Savings account, Vacation nickname, and $500.00 initial deposit; confirm to create it.",
+        "description": "The review shows the correct member, {{account_type}} account, {{nickname}} nickname, and ${{initial_deposit}}.00 initial deposit; confirm to create it.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -284,7 +477,38 @@
             "nth": null,
             "exact": true
           },
-          "fallbacks": []
+          "fallbacks": [
+            {
+              "strategy": "text",
+              "role": null,
+              "name": null,
+              "text": "Confirm Open Account",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "label",
+              "role": null,
+              "name": "Confirm Open Account",
+              "text": null,
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            },
+            {
+              "strategy": "placeholder",
+              "role": null,
+              "name": null,
+              "text": "Confirm Open Account",
+              "selector": null,
+              "frame": [],
+              "nth": null,
+              "exact": true
+            }
+          ]
         },
         "value": null,
         "url": null,
@@ -322,13 +546,6 @@
         "output": "new_account_id",
         "strategy": "visible_regex",
         "pattern": "New account\\s*:?\\s*([A-Z]{2}-\\d+)",
-        "label": null,
-        "target": null
-      },
-      {
-        "output": "savings_balance",
-        "strategy": "visible_regex",
-        "pattern": "Savings balance\\s+([0-9.]+)",
         "label": null,
         "target": null
       }

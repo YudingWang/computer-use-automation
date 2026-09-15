@@ -76,6 +76,8 @@ def compile_trace(
             continue
         control = event.get("control")
         target = action.target or (target_from_control(Control.model_validate(control)) if control else None)
+        if target is not None:
+            target = enrich_target(target)
         if target is None and action.type is not ActionType.NAVIGATE:
             continue
         value = action.value
@@ -93,7 +95,7 @@ def compile_trace(
             Step(
                 id=step_id,
                 action=action.type,
-                description=action.reason,
+                description=parameterize_text(action.reason, params) if action.reason else action.reason,
                 target=target,
                 value=value,
                 url=action.url,
@@ -104,18 +106,24 @@ def compile_trace(
             )
         )
 
+    value_params: set[str] = set()
+    mentioned_params: set[str] = set()
+    for step in steps:
+        blob = f"{step.value or ''} {step.description or ''}"
+        for key in params:
+            if "{{" + key + "}}" in blob:
+                mentioned_params.add(key)
+                if step.value and "{{" + key + "}}" in str(step.value):
+                    value_params.add(key)
     inputs = input_meta or {
         key: InputParam(
-            type=_input_type(key, val),
-            required=True,
+            type=_input_type(key, params[key]),
+            required=key in value_params,
             sensitive=key in sensitive or key.lower().endswith("_id"),
         )
-        for key, val in params.items()
+        for key in params
+        if key in mentioned_params
     }
-    output_names = [item["output"] for item in profile.get("extractors", [])]
-    if not output_names:
-        output_names = list(seen_outputs)
-    outputs = {name: OutputField(type="string") for name in output_names}
     extractors = [
         Extractor(
             output=item["output"],
@@ -125,6 +133,8 @@ def compile_trace(
         )
         for item in profile.get("extractors", [])
     ]
+    output_names = [item.output for item in extractors] or list(seen_outputs)
+    outputs = {name: OutputField(type="string") for name in output_names}
     known_outcomes = [
         OutcomeDetector(
             code=item["code"],
@@ -145,7 +155,7 @@ def compile_trace(
         version="1.0.0",
         interface=CapabilityInterface(
             name=capability_id.replace("_", " ").title(),
-            description=description,
+            description=parameterize_text(description, params),
             inputs=inputs,
             outputs=outputs or {"confirmation_id": OutputField(type="string")},
             outcomes=list(dict.fromkeys(o.code for o in known_outcomes)),
@@ -202,7 +212,51 @@ def target_from_control(control: Control) -> Target:
                 frame=list(control.frame),
             )
         )
-    return Target(primary=primary, fallbacks=fallbacks)
+    return enrich_target(Target(primary=primary, fallbacks=fallbacks))
+
+
+def enrich_target(target: Target) -> Target:
+    """Ensure a locator chain: role+name, then text / label / placeholder."""
+    clone = target.model_copy(deep=True)
+    loc = clone.primary
+    frame = list(loc.frame)
+
+    def add(strategy: LocatorStrategy, *, role: str | None = None, name: str | None = None, text: str | None = None) -> None:
+        candidate = Locator(strategy=strategy, role=role, name=name, text=text, frame=frame)
+        for existing in [clone.primary, *clone.fallbacks]:
+            if (
+                existing.strategy == candidate.strategy
+                and existing.role == candidate.role
+                and existing.name == candidate.name
+                and existing.text == candidate.text
+            ):
+                return
+        clone.fallbacks.append(candidate)
+
+    label = loc.name or loc.text
+    if label:
+        add(LocatorStrategy.TEXT, text=label)
+        add(LocatorStrategy.LABEL, name=label)
+        add(LocatorStrategy.PLACEHOLDER, text=label)
+        if loc.strategy is not LocatorStrategy.ROLE_NAME and loc.role:
+            add(LocatorStrategy.ROLE_NAME, role=loc.role, name=label)
+    return clone
+
+
+def parameterize_text(text: str | None, params: dict[str, Any]) -> str:
+    if not text:
+        return ""
+    out = text
+    for key, raw in sorted(params.items(), key=lambda kv: len(str(kv[1])), reverse=True):
+        if raw is None or str(raw) == "":
+            continue
+        token = "{{" + key + "}}"
+        out = out.replace(str(raw), token)
+        try:
+            out = out.replace(f"{float(raw):.2f}", token)
+        except (TypeError, ValueError):
+            pass
+    return out
 
 
 def _checkpoint_from_event(event: dict[str, Any]) -> Checkpoint | None:

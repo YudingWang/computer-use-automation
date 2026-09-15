@@ -10,6 +10,7 @@ import asyncio
 from typing import Any, Callable, Coroutine
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import uvicorn
@@ -68,6 +69,7 @@ class HandoffManager:
             {"url": self.operator_url, "run_id": self.run_id},
         )
         try:
+            self.surface.set_human_callback(self.record_browser_event)
             await self.surface.install_human_listeners(self.operator_url)
         except Exception:
             pass
@@ -141,6 +143,10 @@ class HandoffManager:
         self.intervention.human_took_control = True
         self.evidence.event("take_control", intervention_id=self.intervention.intervention_id)
         self.evidence.write_json("intervention.json", self.intervention.model_dump(mode="json"))
+        try:
+            await self.surface.install_human_listeners(self.operator_url or "")
+        except Exception:
+            pass
 
     async def human_act(self, action: ActionSpec) -> dict[str, Any]:
         if self.owner is not ControlOwner.HUMAN:
@@ -156,6 +162,14 @@ class HandoffManager:
             self.evidence.write_json("intervention.json", self.intervention.model_dump(mode="json"))
         self.evidence.event("human_action", **event)
         return result
+
+    def record_browser_event(self, payload: dict[str, Any]) -> None:
+        if self.owner is not ControlOwner.HUMAN or self.intervention is None:
+            return
+        event = {"actor": "human_browser", **payload}
+        self.intervention.human_events.append(event)
+        self.evidence.event("human_browser_event", **event)
+        self.evidence.write_json("intervention.json", self.intervention.model_dump(mode="json"))
 
     async def resume(self) -> None:
         if self.intervention is None:
@@ -177,6 +191,12 @@ class HandoffManager:
 
     def _build_app(self) -> FastAPI:
         app = FastAPI()
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
         @app.get("/status")
         async def status() -> dict[str, Any]:
@@ -218,9 +238,7 @@ class HandoffManager:
 
         @app.post("/human-event")
         async def human_event(payload: dict[str, Any]) -> JSONResponse:
-            if self.owner is ControlOwner.HUMAN and self.intervention:
-                self.intervention.human_events.append({"actor": "human_browser", **payload})
-                self.evidence.event("human_browser_event", **payload)
+            self.record_browser_event(payload)
             return JSONResponse({"ok": True})
 
         return app

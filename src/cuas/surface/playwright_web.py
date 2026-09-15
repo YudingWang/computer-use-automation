@@ -37,6 +37,8 @@ class PlaywrightWebSurface:
         self._context: BrowserContext | None = None
         self.page: Page | None = None
         self._used_strategy: str | None = None
+        self._human_callback: Any = None
+        self._human_fn_exposed = False
 
     async def start(self) -> None:
         self._pw = await async_playwright().start()
@@ -257,27 +259,60 @@ class PlaywrightWebSurface:
         assert self.page is not None
         await self.page.screenshot(path=path, full_page=True)
 
+    def set_human_callback(self, callback: Any) -> None:
+        self._human_callback = callback
+
     async def install_human_listeners(self, endpoint: str) -> None:
+        """Record real clicks/submits in this Playwright page (same session).
+
+        Uses expose_function so events do not depend on cross-origin fetch to the
+        operator port. A fetch fallback remains for pages that still have it.
+        """
         assert self.page is not None
+
+        async def _on_human(payload: dict[str, Any]) -> None:
+            cb = self._human_callback
+            if cb is None:
+                return
+            result = cb(payload)
+            if hasattr(result, "__await__"):
+                await result
+
+        if not self._human_fn_exposed:
+            try:
+                await self.page.expose_function("__cuasReportHuman", _on_human)
+                self._human_fn_exposed = True
+            except Exception:
+                pass
+
         script = f"""
         (() => {{
           if (window.__cuasHumanInstalled) return;
           window.__cuasHumanInstalled = true;
           const send = (payload) => {{
-            try {{ fetch("{endpoint}/human-event", {{
-              method: "POST",
-              headers: {{"content-type": "application/json"}},
-              body: JSON.stringify(payload)
-            }}); }} catch (e) {{}}
+            try {{
+              if (window.__cuasReportHuman) window.__cuasReportHuman(payload);
+            }} catch (e) {{}}
+            try {{
+              fetch("{endpoint}/human-event", {{
+                method: "POST",
+                headers: {{"content-type": "application/json"}},
+                body: JSON.stringify(payload),
+                keepalive: true
+              }});
+            }} catch (e) {{}}
           }};
+          const describe = (t) => ({{
+            tag: t && t.tagName,
+            text: ((t && (t.innerText || t.value)) || "").slice(0, 80),
+            name: (t && (t.getAttribute("aria-label") || t.getAttribute("value") || t.name)) || ""
+          }});
           document.addEventListener("click", (e) => {{
-            const t = e.target;
-            send({{
-              type: "click",
-              tag: t.tagName,
-              text: (t.innerText || t.value || "").slice(0, 80),
-              name: t.getAttribute("aria-label") || t.name || ""
-            }});
+            send({{ type: "click", ...describe(e.target) }});
+          }}, true);
+          document.addEventListener("submit", (e) => {{
+            const submitter = e.submitter || e.target;
+            send({{ type: "submit", ...describe(submitter) }});
           }}, true);
           document.addEventListener("change", (e) => {{
             const t = e.target;
@@ -304,6 +339,8 @@ class PlaywrightWebSurface:
         self._browser = None
         self._pw = None
         self.page = None
+        self._human_fn_exposed = False
+        self._human_callback = None
 
     def locator_debug(self, locator: Locator) -> str:
         frame = "/".join(locator.frame) or "top"

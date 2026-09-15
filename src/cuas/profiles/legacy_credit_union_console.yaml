@@ -47,6 +47,3 @@ extractors:
   - output: new_account_id
     strategy: visible_regex
     pattern: "New account\\s*:?\\s*([A-Z]{2}-\\d+)"
-  - output: savings_balance
-    strategy: visible_regex
-    pattern: "Savings balance\\s+([0-9.]+)"

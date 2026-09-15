@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -98,6 +99,37 @@ async def test_risky_step_without_approval_escalates(tmp_path: Path, demo_url: s
     assert result["status"] == Status.HUMAN_REQUIRED.value
     assert result["step_id"] == "confirm_create"
     assert (tmp_path / "intervention.json").exists()
+
+
+@pytest.mark.asyncio
+async def test_browser_click_is_recorded_on_handoff(tmp_path: Path, demo_url: str) -> None:
+    async def click_in_same_page(handoff) -> None:
+        import asyncio
+
+        while handoff.intervention is None:
+            await asyncio.sleep(0.05)
+        await handoff.take_control()
+        assert handoff.surface.page is not None
+        await handoff.surface.page.get_by_role("button", name="Confirm Open Account").click()
+        await asyncio.sleep(0.3)
+        await handoff.resume()
+
+    cap = open_subaccount_capability(demo_url)
+    executor = ReplayExecutor(
+        cap,
+        _params(member_id="67890", nickname="Recorded", initial_deposit="80"),
+        evidence_dir=tmp_path,
+        start_url=demo_url,
+        allow_risky=False,
+        auto_operator=click_in_same_page,
+    )
+    result = await executor.run()
+    assert result.status is Status.SUCCESS
+    intervention = json.loads((tmp_path / "intervention.json").read_text())
+    assert intervention["human_took_control"] is True
+    assert intervention["human_events"], "human click must be recorded"
+    texts = " ".join(str(ev) for ev in intervention["human_events"])
+    assert "Confirm" in texts or "click" in texts or "submit" in texts
 
 
 @pytest.mark.asyncio

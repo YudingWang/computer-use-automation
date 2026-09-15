@@ -14,8 +14,8 @@ Trade-off: one process plus a loopback operator port, not a worker fleet. The ab
 
 A capability is a tool, not a step dump:
 
-- `interface` — name, description, typed inputs (`member_id` is a **string** even when numeric; `initial_deposit` is a **number**), outputs, outcome codes.
-- `implementation.steps[]` — action, ordered locator chain, `{{param}}` values, checkpoint, risk class.
+- `interface` — name, description with `{{params}}` (no instance values like `12345`), typed inputs (`member_id` is a **string** even when numeric; `initial_deposit` is a **number**), outputs that the success page actually yields, outcome codes. Inputs are only those bound in a step (`{{member_id}}`, etc.).
+- `implementation.steps[]` — action, ordered locator chain (primary `role_name` plus text/label/placeholder fallbacks), `{{param}}` values, checkpoint, risk class.
 - `implementation.known_outcomes` / `recoverables` — page detectors in the artifact, not hardcoded `if url`.
 - `binding` — `app_family`, surface kind, entry URL; optional tenant locator overrides.
 
@@ -48,11 +48,11 @@ Risky/irreversible steps, session-expired recoverables, and unresolved targets e
 The handoff is a **control lease** on the same Playwright page:
 
 1. Automation pauses, writes an `Intervention` (reason, step, URL, screenshot).
-2. A loopback API (`take-control` / `resume`) plus DOM listeners on the headed window.
-3. After `take-control`, the human clicks in **that** browser; events are attributed `human`.
+2. A loopback API (`take-control` / `resume`). DOM listeners on the same Playwright page report click/submit through `expose_function` (not a cross-origin fetch).
+3. After `take-control`, the human clicks in **that** browser; each click/submit is appended to `intervention.human_events` and `events.jsonl`.
 4. `resume` returns the lease. If the risky step’s checkpoint is already true, replay skips re-clicking it.
 
-`--headed --wait-for-operator` is the submission path. A scripted operator exists only in tests. A full co-browse console is out of scope.
+`--headed --wait-for-operator` is the submission path. `--allow-risky` is an explicit unattended approval of Confirm, not the default. A scripted operator exists only in tests.
 
 ## 6. Safety
 

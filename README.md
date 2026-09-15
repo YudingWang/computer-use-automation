@@ -18,7 +18,7 @@ artifacts/open_subaccount.v1.json     typed inputs/outputs, locator chain, check
 python -m cuas replay            no LLM; locators + checkpoints + outcome detectors
         │
         └── risky Confirm ──► pause same headed browser
-                              operator take-control → human clicks → resume
+                              operator take-control → human clicks (recorded) → resume
 ```
 
 Cross-cutting: `surface/` (Playwright), `safety/policy.py`, `safety/redaction.py`, `observability/`.
@@ -30,18 +30,21 @@ Target UI is `demo_app/` — iframe search, generated IDs, nested tables, not-fo
 Python 3.11+, Chromium, OpenAI key (discovery only).
 
 ```bash
-cd /Users/yh-yao/Downloads/computer-use-automation
+git clone https://github.com/YudingWang/computer-use-automation.git
+cd computer-use-automation
 python3 -m venv .venv
-source .venv/bin/activate          # prompt should show (.venv), not anaconda
-which python                       # must be .../computer-use-automation/.venv/bin/python
+source .venv/bin/activate
+which python    # must be .../computer-use-automation/.venv/bin/python
 pip install -e ".[dev]"
 playwright install chromium
-cp .env.example .env               # set OPENAI_API_KEY
+cp .env.example .env    # set OPENAI_API_KEY
 ```
 
-Every later command in this README assumes that venv is active. If `python -m cuas` says `No module named cuas`, you are on the wrong interpreter.
+If `python -m cuas` says `No module named cuas`, the venv is not active.
 
 ## Live discovery
+
+The goal is to **finish creating** the sub-account, including the irreversible confirm. Confirm is still `risky`; unattended replay must pass `--allow-risky` explicitly.
 
 Terminal 1:
 
@@ -49,14 +52,13 @@ Terminal 1:
 python -m cuas demo-app --port 8765
 ```
 
-Terminal 2 — this is the required genuine LLM run. It writes `evidence/discovery/` and compiles `artifacts/open_subaccount.v1.json`.
+Terminal 2:
 
 ```bash
 python -m cuas discover \
-  --goal "Look up member 12345 and open a Savings sub-account named Vacation with initial deposit 500. Stop on the confirmation screen." \
+  --goal "Look up member 12345, open a Savings sub-account named Vacation with initial deposit 500, and confirm creating the account." \
   --target http://127.0.0.1:8765/ \
   --param member_id=12345 \
-  --param account_type=Savings \
   --param nickname=Vacation \
   --param initial_deposit=500 \
   --out artifacts/open_subaccount.v1.json \
@@ -67,26 +69,24 @@ A live run is proven by `evidence/discovery/provenance.json`: `"live": true`, `o
 
 ## Deterministic replay (no LLM)
 
-Uses the artifact from discovery. Different member:
+`--allow-risky` means “I am explicitly approving the Confirm step for this unattended run.”
 
 ```bash
 python -m cuas replay \
   --artifact artifacts/open_subaccount.v1.json \
   --input member_id=67890 \
-  --input account_type=Savings \
   --input nickname=RainyDay \
   --input initial_deposit=250 \
   --allow-risky \
   --evidence evidence/replay-success
 ```
 
-`--allow-risky` is for unattended happy-path capture. Member not found is a business outcome, not a crash:
+Not-found is a business outcome, not a crash:
 
 ```bash
 python -m cuas replay \
   --artifact artifacts/open_subaccount.v1.json \
   --input member_id=99999 \
-  --input account_type=Savings \
   --input nickname=X \
   --input initial_deposit=1 \
   --allow-risky \
@@ -95,15 +95,12 @@ python -m cuas replay \
 
 ## Manual human handoff
 
-Replay pauses on irreversible **Confirm Open Account**. The headed Playwright window **stays open**; you click in that same window.
-
-Terminal 2:
+Without `--allow-risky`, replay pauses on **Confirm Open Account**. Click in the headed Playwright window (not a separately opened browser tab). Clicks are written to `intervention.json` as `human_events`.
 
 ```bash
 python -m cuas replay \
   --artifact artifacts/open_subaccount.v1.json \
   --input member_id=12345 \
-  --input account_type=Savings \
   --input nickname=Handoff \
   --input initial_deposit=10 \
   --headed \
@@ -111,15 +108,13 @@ python -m cuas replay \
   --evidence evidence/replay-human
 ```
 
-When it prints `=== HUMAN HANDOFF ===`, Terminal 3:
+When it prints `=== HUMAN HANDOFF ===`:
 
 ```bash
 python -m cuas operator take-control --endpoint <url printed by replay>
-# click Confirm Open Account in the headed browser
+# click Confirm Open Account in that headed window
 python -m cuas operator resume --endpoint <url printed by replay>
 ```
-
-`--headed` keeps the live session visible and waits for the operator. Do not close the browser.
 
 ## Tests
 
@@ -131,13 +126,11 @@ No OpenAI key required. Scripted LLM client is a **test fixture only**.
 
 ## Evidence
 
-Generate after live discovery / replay (do not commit placeholders):
-
 | Path | Source |
 |------|--------|
-| `evidence/discovery/` | live `discover` — provenance, events, trace, result, screenshots |
-| `evidence/replay-success/` | `replay` with a different member |
-| `evidence/replay-not-found/` | `replay` with `member_id=99999` |
-| `evidence/replay-human/` | headed handoff — intervention, events, result, screenshots |
+| `evidence/discovery/` | live `discover` |
+| `evidence/replay-success/` | unattended replay with `--allow-risky` |
+| `evidence/replay-not-found/` | `member_id=99999` |
+| `evidence/replay-human/` | headed handoff; `human_events` must be non-empty |
 
 `REPORT.md` is the design write-up.
