@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "interface": {
     "name": "Open Subaccount",
-    "description": "Look up a member, open a Savings sub-account, and confirm creating the account.",
+    "description": "Look up member {{member_id}}, open a Savings sub-account named {{nickname}} with initial deposit {{initial_deposit}}, and confirm creating the account.",
     "inputs": {
       "member_id": {
         "type": "string",
@@ -134,7 +134,7 @@
       {
         "id": "02_click_search",
         "action": "click",
-        "description": "Submit member ID {{member_id}} to open the member record.",
+        "description": "Search for member {{member_id}}.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -205,7 +205,7 @@
       {
         "id": "03_click_open_new_sub_account",
         "action": "click",
-        "description": "Open the new sub-account form for member {{member_id}}.",
+        "description": "Open the form to create a new sub-account for member {{member_id}}.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -268,7 +268,7 @@
       {
         "id": "04_type_nickname",
         "action": "type",
-        "description": "Enter the requested Savings sub-account nickname.",
+        "description": "Enter the requested sub-account nickname.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -331,7 +331,7 @@
       {
         "id": "05_type_0_00",
         "action": "type",
-        "description": "Enter the requested initial deposit of {{initial_deposit}} before reviewing the new Savings sub-account.",
+        "description": "Enter the requested initial deposit before reviewing the new {{nickname}} savings sub-account.",
         "target": {
           "primary": {
             "strategy": "role_name",
@@ -457,7 +457,7 @@
       {
         "id": "07_click_confirm_open_account",
         "action": "click",
-        "description": "The review shows the correct member, Savings account, {{nickname}} nickname, and ${{initial_deposit}}.00 initial deposit; confirm to create it.",
+        "description": "Review shows the correct member, Savings account, {{nickname}} nickname, and ${{initial_deposit}}.00 initial deposit; confirm creation.",
         "target": {
           "primary": {
             "strategy": "role_name",

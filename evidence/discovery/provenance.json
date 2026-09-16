@@ -1,0 +1,139 @@
+{
+  "run_id": "disc_12fe89f1e5cb",
+  "live": true,
+  "provider": "openai",
+  "calls": [
+    {
+      "step": 1,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOYUB0RnP33ewAedPxQUt7la3cftB",
+      "created": 1789521143,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 3275,
+      "usage": {
+        "prompt_tokens": "***66",
+        "completion_tokens": "***",
+        "total_tokens": "***40"
+      }
+    },
+    {
+      "step": 2,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOYUDTB5KPfY10A6LeFp0B5OytwcE",
+      "created": 1789521145,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 1560,
+      "usage": {
+        "prompt_tokens": "***90",
+        "completion_tokens": "***",
+        "total_tokens": "***47"
+      }
+    },
+    {
+      "step": 3,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOYUF4SLs4CMQm5xmT9gQlyBXrSlh",
+      "created": 1789521147,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 1660,
+      "usage": {
+        "prompt_tokens": "***98",
+        "completion_tokens": "***",
+        "total_tokens": "***76"
+      }
+    },
+    {
+      "step": 4,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOYUIMtYM4hJraHaybv8oVsEPYMR6",
+      "created": 1789521150,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 2820,
+      "usage": {
+        "prompt_tokens": "***81",
+        "completion_tokens": "***",
+        "total_tokens": "***67"
+      }
+    },
+    {
+      "step": 5,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOYULbXLWAoLy8OR59QSXh0M8OU60",
+      "created": 1789521153,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 2421,
+      "usage": {
+        "prompt_tokens": "***94",
+        "completion_tokens": "***",
+        "total_tokens": "***76"
+      }
+    },
+    {
+      "step": 6,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOYUNpo5avxGg8cwp6luhRuFlQYPF",
+      "created": 1789521155,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 1600,
+      "usage": {
+        "prompt_tokens": "***12",
+        "completion_tokens": "***",
+        "total_tokens": "***80"
+      }
+    },
+    {
+      "step": 7,
+      "live": true,
+      "provider": "openai",
+      "requested_model": "gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "openai_id": "chatcmpl-EOYUPCWKbTA0vHLIZCVPLxo4m81ki",
+      "created": 1789521157,
+      "system_fingerprint": null,
+      "base_url": "https://api.openai.com/v1",
+      "latency_ms": 2039,
+      "usage": {
+        "prompt_tokens": "***75",
+        "completion_tokens": "***",
+        "total_tokens": "***56"
+      }
+    }
+  ],
+  "call_count": 7,
+  "total_llm_ms": 15375,
+  "total_tokens": "***42",
+  "openai_ids": [
+    "chatcmpl-EOYUB0RnP33ewAedPxQUt7la3cftB",
+    "chatcmpl-EOYUDTB5KPfY10A6LeFp0B5OytwcE",
+    "chatcmpl-EOYUF4SLs4CMQm5xmT9gQlyBXrSlh",
+    "chatcmpl-EOYUIMtYM4hJraHaybv8oVsEPYMR6",
+    "chatcmpl-EOYULbXLWAoLy8OR59QSXh0M8OU60",
+    "chatcmpl-EOYUNpo5avxGg8cwp6luhRuFlQYPF",
+    "chatcmpl-EOYUPCWKbTA0vHLIZCVPLxo4m81ki"
+  ],
+  "how_to_verify": "Live runs have live=true, openai_id values like chatcmpl-\u2026, non-zero token usage, and per-step latency typically hundreds of ms. Scripted runs have live=false, provider=scripted, openai_id=null."
+}

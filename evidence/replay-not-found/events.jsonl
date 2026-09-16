@@ -1,0 +1,5 @@
+{"ts": "2026-09-16T01:12:43.768539Z", "event": "replay_start", "run_id": "run_84e6ce529b03", "capability_id": "open_subaccount", "params": {"member_id": "***99", "nickname": "X", "initial_deposit": "1"}}
+{"ts": "2026-09-16T01:12:44.617421Z", "event": "step_start", "step_id": "01_type_member_id", "action": "type", "value": "***99"}
+{"ts": "2026-09-16T01:12:44.906577Z", "event": "step_ok", "step_id": "01_type_member_id", "duration_ms": 321, "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-16T01:12:44.925264Z", "event": "step_start", "step_id": "02_click_search", "action": "click", "value": null}
+{"ts": "2026-09-16T01:12:45.191784Z", "event": "business_outcome", "code": "MEMBER_NOT_FOUND", "step_id": "02_click_search"}

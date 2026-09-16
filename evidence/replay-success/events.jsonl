@@ -1,0 +1,16 @@
+{"ts": "2026-09-16T01:12:40.304437Z", "event": "replay_start", "run_id": "run_689e66d3aa26", "capability_id": "open_subaccount", "params": {"member_id": "***90", "nickname": "RainyDay", "initial_deposit": "250"}}
+{"ts": "2026-09-16T01:12:41.267966Z", "event": "step_start", "step_id": "01_type_member_id", "action": "type", "value": "***90"}
+{"ts": "2026-09-16T01:12:41.553638Z", "event": "step_ok", "step_id": "01_type_member_id", "duration_ms": 324, "strategy": "role_name", "url": "http://127.0.0.1:8765/"}
+{"ts": "2026-09-16T01:12:41.572442Z", "event": "step_start", "step_id": "02_click_search", "action": "click", "value": null}
+{"ts": "2026-09-16T01:12:41.864471Z", "event": "step_ok", "step_id": "02_click_search", "duration_ms": 311, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***90"}
+{"ts": "2026-09-16T01:12:41.883211Z", "event": "step_start", "step_id": "03_click_open_new_sub_account", "action": "click", "value": null}
+{"ts": "2026-09-16T01:12:42.156868Z", "event": "step_ok", "step_id": "03_click_open_new_sub_account", "duration_ms": 292, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***90/subaccount/new"}
+{"ts": "2026-09-16T01:12:42.174845Z", "event": "step_start", "step_id": "04_type_nickname", "action": "type", "value": "RainyDay"}
+{"ts": "2026-09-16T01:12:42.409616Z", "event": "step_ok", "step_id": "04_type_nickname", "duration_ms": 252, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***90/subaccount/new"}
+{"ts": "2026-09-16T01:12:42.419884Z", "event": "step_start", "step_id": "05_type_0_00", "action": "type", "value": "250"}
+{"ts": "2026-09-16T01:12:42.667577Z", "event": "step_ok", "step_id": "05_type_0_00", "duration_ms": 258, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***90/subaccount/new"}
+{"ts": "2026-09-16T01:12:42.676887Z", "event": "step_start", "step_id": "06_click_review", "action": "click", "value": null}
+{"ts": "2026-09-16T01:12:42.954589Z", "event": "step_ok", "step_id": "06_click_review", "duration_ms": 287, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***90/subaccount/review"}
+{"ts": "2026-09-16T01:12:42.973621Z", "event": "step_start", "step_id": "07_click_confirm_open_account", "action": "click", "value": null}
+{"ts": "2026-09-16T01:12:43.245156Z", "event": "step_ok", "step_id": "07_click_confirm_open_account", "duration_ms": 290, "strategy": "role_name", "url": "http://127.0.0.1:8765/members/***90/subaccount/confirm"}
+{"ts": "2026-09-16T01:12:43.289474Z", "event": "replay_success", "outputs": {"confirmation_id": "CNF-2026-***02", "new_account_id": "SA-9002"}}

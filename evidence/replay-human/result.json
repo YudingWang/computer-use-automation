@@ -1,0 +1,17 @@
+{
+  "status": "SUCCESS",
+  "run_id": "run_1f5fdde4f2af",
+  "capability_id": "open_subaccount",
+  "mode": "replay",
+  "outputs": {
+    "confirmation_id": "CNF-2026-***03",
+    "new_account_id": "SA-9003"
+  },
+  "outcome_code": null,
+  "message": null,
+  "step_id": null,
+  "expected": null,
+  "observed": null,
+  "intervention_id": null,
+  "evidence_dir": "evidence/replay-human"
+}

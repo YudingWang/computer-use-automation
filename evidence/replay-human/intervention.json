@@ -1,0 +1,46 @@
+{
+  "intervention_id": "int_3fb8e208663a",
+  "run_id": "run_1f5fdde4f2af",
+  "capability_id": "open_subaccount",
+  "step_id": "07_click_confirm_open_account",
+  "reason": "step 07_click_confirm_open_account is risky and not auto-approved",
+  "current_url": "http://127.0.0.1:8765/members/***45/subaccount/review",
+  "screenshot_ref": "evidence/replay-human/escalation.png",
+  "expected": "Review shows the correct member, Savings account, Handoff nickname, and $10.00 initial deposit; confirm creation.",
+  "observed": null,
+  "control_owner": "AUTOMATION",
+  "state": "RESUMED",
+  "operator_url": "http://127.0.0.1:***74",
+  "created_at": "2026-09-16T01:12:54.418956Z",
+  "human_took_control": true,
+  "human_events": [
+    {
+      "actor": "human_browser",
+      "type": "click",
+      "tag": "INPUT",
+      "text": "Confirm Open Account",
+      "name": "Confirm Open Account"
+    },
+    {
+      "actor": "human_browser",
+      "type": "submit",
+      "tag": "INPUT",
+      "text": "Confirm Open Account",
+      "name": "Confirm Open Account"
+    },
+    {
+      "actor": "human_browser",
+      "type": "click",
+      "tag": "INPUT",
+      "text": "Confirm Open Account",
+      "name": "Confirm Open Account"
+    },
+    {
+      "actor": "human_browser",
+      "type": "submit",
+      "tag": "INPUT",
+      "text": "Confirm Open Account",
+      "name": "Confirm Open Account"
+    }
+  ]
+}
