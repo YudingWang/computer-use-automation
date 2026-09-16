@@ -130,6 +130,8 @@ No OpenAI key required. Scripted LLM client is a **test fixture only**.
 
 ## Evidence
 
+Each command below starts a **new** `events.jsonl` (the writer truncates the file). For a clean submission, delete the four folders and run each scenario once.
+
 | Path | Source |
 |------|--------|
 | `evidence/discovery/` | live `discover` |

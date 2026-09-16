@@ -167,6 +167,10 @@ class HandoffManager:
         if self.owner is not ControlOwner.HUMAN or self.intervention is None:
             return
         event = {"actor": "human_browser", **payload}
+        last = self.intervention.human_events[-1] if self.intervention.human_events else None
+        signature = (event.get("type"), event.get("tag"), event.get("text"), event.get("name"))
+        if last and (last.get("type"), last.get("tag"), last.get("text"), last.get("name")) == signature:
+            return
         self.intervention.human_events.append(event)
         self.evidence.event("human_browser_event", **event)
         self.evidence.write_json("intervention.json", self.intervention.model_dump(mode="json"))

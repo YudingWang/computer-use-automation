@@ -58,7 +58,7 @@ The handoff is a **control lease** on the same Playwright page:
 
 The same policy engine gates discovery and replay: host allowlist (`127.0.0.1` / `localhost`), allowed action types, no `eval_js`. Reads/searches are safe; form fill is reversible; Confirm Open Account is risky and, on replay, requires a human unless `--allow-risky` (evidence capture only).
 
-Sensitive inputs are parameterized out of artifacts. Logs mask `member_id` and secret-shaped keys. API keys stay in the environment. Screenshots are synthetic demo data; production would need image redaction, encryption, and retention. The allowlist is host/action based, not a full entitlement graph.
+Sensitive inputs are parameterized out of artifacts. Logs and persisted JSON (`events.jsonl`, `trace.json`) go through the same recursive redaction (`member_id` and secret-shaped keys). API keys stay in the environment. Each run truncates `events.jsonl` so evidence folders do not accumulate prior attempts. Screenshots are synthetic demo data; production would need image redaction, encryption, and retention. The allowlist is host/action based, not a full entitlement graph.
 
 ## 7. Cuts
 

@@ -49,6 +49,17 @@ def redact_event(event: dict[str, Any]) -> dict[str, Any]:
     return {k: _redact_any(k, v) for k, v in event.items()}
 
 
+def redact_payload(data: Any) -> Any:
+    """Same recursive redaction as events.jsonl, for traces and other JSON blobs."""
+    if isinstance(data, dict):
+        return redact_event(data)
+    if isinstance(data, list):
+        return [redact_payload(item) for item in data]
+    if isinstance(data, str):
+        return redact_text(data)
+    return data
+
+
 def _redact_any(key: str, value: Any) -> Any:
     if isinstance(value, dict):
         return {k: _redact_any(k, v) for k, v in value.items()}

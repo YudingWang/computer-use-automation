@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from cuas.safety.redaction import redact_event
+from cuas.safety.redaction import redact_event, redact_payload
 from cuas.util import utc_now
 
 
@@ -13,6 +13,7 @@ class EvidenceWriter:
         self.directory = directory
         self.directory.mkdir(parents=True, exist_ok=True)
         self.log_path = self.directory / "events.jsonl"
+        self.log_path.write_text("", encoding="utf-8")
 
     def event(self, event_type: str, **fields: Any) -> dict[str, Any]:
         payload = redact_event({"ts": utc_now(), "event": event_type, **fields})
@@ -22,7 +23,10 @@ class EvidenceWriter:
 
     def write_json(self, name: str, data: Any) -> Path:
         path = self.directory / name
-        path.write_text(json.dumps(data, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
+        path.write_text(
+            json.dumps(redact_payload(data), indent=2, ensure_ascii=True) + "\n",
+            encoding="utf-8",
+        )
         return path
 
     def path(self, name: str) -> Path:

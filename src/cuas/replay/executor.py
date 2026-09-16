@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any, Callable, Coroutine
 
@@ -276,10 +277,13 @@ class ReplayExecutor:
         assert self.handoff is not None
         sid = step_id or (step.id if step else None)
         should_wait = self.auto_operator is not None or self.wait_for_operator if wait is None else wait
+        expected_text = expected
+        if expected_text is None and step and step.description:
+            expected_text = _render_known(step.description, self.params)
         intervention = await self.handoff.escalate(
             reason,
             step_id=sid,
-            expected=expected or (step.description if step else None),
+            expected=expected_text,
             observed=observed,
             wait=should_wait,
         )
@@ -343,6 +347,16 @@ class ReplayExecutor:
         if self.handoff:
             await self.handoff.close()
         await self.surface.close()
+
+
+def _render_known(text: str, params: dict[str, Any]) -> str:
+    def repl(match: re.Match[str]) -> str:
+        key = match.group(1)
+        if key in params:
+            return str(params[key])
+        return match.group(0)
+
+    return re.sub(r"\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}", repl, text)
 
 
 def _step_to_action(step: Step, params: dict[str, Any]) -> ActionSpec:
