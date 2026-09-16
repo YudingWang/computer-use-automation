@@ -95,7 +95,7 @@ def compile_trace(
             Step(
                 id=step_id,
                 action=action.type,
-                description=parameterize_text(action.reason, params) if action.reason else action.reason,
+                description=action.reason,
                 target=target,
                 value=value,
                 url=action.url,
@@ -107,22 +107,23 @@ def compile_trace(
         )
 
     value_params: set[str] = set()
-    mentioned_params: set[str] = set()
     for step in steps:
-        blob = f"{step.value or ''} {step.description or ''}"
-        for key in params:
-            if "{{" + key + "}}" in blob:
-                mentioned_params.add(key)
-                if step.value and "{{" + key + "}}" in str(step.value):
+        if isinstance(step.value, str):
+            for key in params:
+                if "{{" + key + "}}" in step.value:
                     value_params.add(key)
+    bound = {key: params[key] for key in value_params}
+    for step in steps:
+        if step.description:
+            step.description = parameterize_text(step.description, bound)
     inputs = input_meta or {
         key: InputParam(
             type=_input_type(key, params[key]),
-            required=key in value_params,
+            required=True,
             sensitive=key in sensitive or key.lower().endswith("_id"),
         )
         for key in params
-        if key in mentioned_params
+        if key in value_params
     }
     extractors = [
         Extractor(
@@ -155,7 +156,7 @@ def compile_trace(
         version="1.0.0",
         interface=CapabilityInterface(
             name=capability_id.replace("_", " ").title(),
-            description=parameterize_text(description, params),
+            description=parameterize_text(description, bound),
             inputs=inputs,
             outputs=outputs or {"confirmation_id": OutputField(type="string")},
             outcomes=list(dict.fromkeys(o.code for o in known_outcomes)),

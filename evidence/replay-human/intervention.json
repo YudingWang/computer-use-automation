@@ -6,7 +6,7 @@
   "reason": "step 07_click_confirm_open_account is risky and not auto-approved",
   "current_url": "http://127.0.0.1:8765/members/12345/subaccount/review",
   "screenshot_ref": "evidence/replay-human/escalation.png",
-  "expected": "The review shows the correct member, {{account_type}} account, {{nickname}} nickname, and ${{initial_deposit}}.00 initial deposit; confirm to create it.",
+  "expected": "The review shows the correct member, Savings account, {{nickname}} nickname, and ${{initial_deposit}}.00 initial deposit; confirm to create it.",
   "observed": null,
   "control_owner": "AUTOMATION",
   "state": "RESUMED",

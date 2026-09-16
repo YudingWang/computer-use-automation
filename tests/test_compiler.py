@@ -48,3 +48,31 @@ def test_compiler_parameterizes_typed_values() -> None:
     assert "MEMBER_NOT_FOUND" in cap.interface.outcomes
     assert "{{member_id}}" in cap.model_dump_json()
     assert "12345" not in cap.implementation.steps[0].value
+
+
+def test_compiler_omits_unused_account_type_and_keeps_savings_literal() -> None:
+    events = [
+        {
+            "event": "action_result",
+            "action": {
+                "type": "type",
+                "value": "Vacation",
+                "target": {"primary": {"strategy": "placeholder", "text": "Nickname"}},
+                "reason": "Enter the requested Savings sub-account nickname.",
+            },
+            "title_after": "Open New Sub-account",
+            "visible_after": "Open New Sub-account",
+        }
+    ]
+    cap = compile_trace(
+        events,
+        capability_id="open_subaccount",
+        description="Open a Savings sub-account",
+        params={"nickname": "Vacation", "account_type": "Savings"},
+        entry_url="http://127.0.0.1:8765/",
+    )
+    assert "account_type" not in cap.interface.inputs
+    assert cap.interface.inputs["nickname"].required
+    assert "{{account_type}}" not in cap.model_dump_json()
+    assert "Savings" in cap.implementation.steps[0].description
+    assert cap.implementation.steps[0].value == "{{nickname}}"
