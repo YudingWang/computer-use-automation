@@ -1,11 +1,11 @@
 {
   "status": "SUCCESS",
-  "run_id": "run_146a02689db5",
+  "run_id": "run_8c08a145a948",
   "capability_id": "open_subaccount",
   "mode": "replay",
   "outputs": {
-    "confirmation_id": "CNF-2026-01007",
-    "new_account_id": "SA-9007"
+    "confirmation_id": "CNF-2026-01008",
+    "new_account_id": "SA-9008"
   },
   "outcome_code": null,
   "message": null,
